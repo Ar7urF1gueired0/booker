@@ -1,0 +1,88 @@
+# Nome do pipeline
+name: Pipeline de CI/CD para React App
+
+# Gatilho: Roda em push na branch main
+on:
+  push:
+    branches: [ "main" ]
+
+# Tarefas (Jobs)
+jobs:
+  # Job para construir e testar a aplicação
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout do código
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # 2. Configurar o Node.js
+      - name: Configurar Node.js v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # Usar cache para o npm acelera as instalações futuras
+          cache: 'npm'
+
+      # 3. Instalar as dependências
+      - name: Instalar dependências
+        run: npm ci # 'npm ci' é mais rápido e seguro para pipelines que 'npm install'
+
+      # 4. Rodar o Lint para verificar a qualidade do código (OPCIONAL, MAS RECOMENDADO)
+      # Se seu projeto tiver o script "lint", descomente a linha abaixo
+      # - name: Linting do código
+      #   run: npm run lint
+
+      # 5. Rodar os testes
+      - name: Rodar os testes
+        run: npm test -- --watchAll=false # O parâmetro extra faz o teste rodar uma vez e sair
+
+      # 6. Construir a aplicação (gera a pasta 'build')
+      - name: Build do projeto React
+        run: npm run build
+
+      # 7. Salvar o artefato de build para usar no job de deploy
+      - name: Salvar artefato de build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: build # Nome da pasta gerada pelo 'npm run build'
+
+  # Job para fazer o deploy, que SÓ RODA SE o 'build-and-test' for bem-sucedido
+  # deploy:
+  #   # Precisa que o job anterior termine com sucesso
+  #   needs: build-and-test
+    
+  #   # Permissões necessárias para o Actions publicar no GitHub Pages
+  #   permissions:
+  #     pages: write
+  #     id-token: write
+
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     # 1. Baixa o artefato (a pasta 'build') que foi salvo no job anterior
+  #     - name: Baixar artefato de build
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-files
+  #         path: .
+
+  #     # 2. Configura o GitHub Pages
+  #     - name: Configurar Pages
+  #       uses: actions/configure-pages@v5
+
+  #     # 3. Sobe o conteúdo da pasta 'build' para o servidor do GitHub Pages
+  #     - name: Upload para Pages
+  #       uses: actions/upload-pages-artifact@v3
+  #       with:
+  #         path: 'build' # Aponta para a pasta que será publicada
+
+  #     # 4. Finaliza o deploy
+  #     - name: Fazer Deploy no GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4
