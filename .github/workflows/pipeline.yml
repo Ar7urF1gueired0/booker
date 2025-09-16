@@ -22,67 +22,49 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          # Usar cache para o npm acelera as instalações futuras
           cache: 'npm'
 
       # 3. Instalar as dependências
       - name: Instalar dependências
-        run: npm ci # 'npm ci' é mais rápido e seguro para pipelines que 'npm install'
+        run: npm ci
 
-      # 4. Rodar o Lint para verificar a qualidade do código (OPCIONAL, MAS RECOMENDADO)
-      # Se seu projeto tiver o script "lint", descomente a linha abaixo
-      # - name: Linting do código
-      #   run: npm run lint
+      # 4. Pular os testes (já que não existem)
+      - name: Rodar os testes
+        run: echo "Nenhum teste configurado, pulando esta etapa."
 
-      # 5. Rodar os testes
-      # - name: Rodar os testes
-      #   run: npm test -- --watchAll=false # O parâmetro extra faz o teste rodar uma vez e sair
-
-      # 6. Construir a aplicação (gera a pasta 'build')
+      # 5. Construir a aplicação (gera a pasta 'build' ou 'dist')
       - name: Build do projeto React
         run: npm run build
 
-      # 7. Salvar o artefato de build para usar no job de deploy
-      - name: Salvar artefato de build
+      # 6. Salvar o artefato de build para usar no job de deploy
+      - name: Salvar o artefato de build
         uses: actions/upload-artifact@v4
         with:
           name: build-files
-          path: build # Nome da pasta gerada pelo 'npm run build'
+          path: dist # Para projetos Vite, a pasta geralmente se chama 'dist'. Se for create-react-app, mude para 'build'.
 
-  # Job para fazer o deploy, que SÓ RODA SE o 'build-and-test' for bem-sucedido
-  # deploy:
-  #   # Precisa que o job anterior termine com sucesso
-  #   needs: build-and-test
-    
-  #   # Permissões necessárias para o Actions publicar no GitHub Pages
-  #   permissions:
-  #     pages: write
-  #     id-token: write
-
-  #   environment:
-  #     name: github-pages
-  #     url: ${{ steps.deployment.outputs.page_url }}
-
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     # 1. Baixa o artefato (a pasta 'build') que foi salvo no job anterior
-  #     - name: Baixar artefato de build
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: build-files
-  #         path: .
-
-  #     # 2. Configura o GitHub Pages
-  #     - name: Configurar Pages
-  #       uses: actions/configure-pages@v5
-
-  #     # 3. Sobe o conteúdo da pasta 'build' para o servidor do GitHub Pages
-  #     - name: Upload para Pages
-  #       uses: actions/upload-pages-artifact@v3
-  #       with:
-  #         path: 'build' # Aponta para a pasta que será publicada
-
-  #     # 4. Finaliza o deploy
-  #     - name: Fazer Deploy no GitHub Pages
-  #       id: deployment
-  #       uses: actions/deploy-pages@v4
+# O Job de deploy continua comentado. Quando quiser ativá-lo, é só remover os '#'
+#  deploy:
+#    needs: build-and-test
+#    permissions:
+#      pages: write
+#      id-token: write
+#    environment:
+#      name: github-pages
+#      url: ${{ steps.deployment.outputs.page_url }}
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Baixar artefato de build
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: build-files
+#          path: .
+#      - name: Configurar Pages
+#        uses: actions/configure-pages@v5
+#      - name: Upload para Pages
+#        uses: actions/upload-pages-artifact@v3
+#        with:
+#          path: '.'
+#      - name: Fazer Deploy no GitHub Pages
+#        id: deployment
+#        uses: actions/deploy-pages@v4
