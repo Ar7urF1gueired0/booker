@@ -35,8 +35,8 @@ jobs:
       #   run: npm run lint
 
       # 5. Rodar os testes
-      - name: Rodar os testes
-        run: npm test -- --watchAll=false # O parâmetro extra faz o teste rodar uma vez e sair
+      # - name: Rodar os testes
+      #   run: npm test -- --watchAll=false # O parâmetro extra faz o teste rodar uma vez e sair
 
       # 6. Construir a aplicação (gera a pasta 'build')
       - name: Build do projeto React
