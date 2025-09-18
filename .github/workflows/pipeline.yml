@@ -8,7 +8,6 @@ on:
 
 # Tarefas (Jobs)
 jobs:
-  # Job para construir e testar a aplicação
   build-and-test:
     runs-on: ubuntu-latest
     
@@ -28,7 +27,7 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
-      # 4. Pular os testes (já que não existem)
+      # 4. Testes
       - name: Rodar os testes
         run: echo "Nenhum teste configurado, pulando esta etapa."
 
@@ -41,9 +40,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-files
-          path: dist # Para projetos Vite, a pasta geralmente se chama 'dist'. Se for create-react-app, mude para 'build'.
+          path: dist 
 
-# O Job de deploy continua comentado. Quando quiser ativá-lo, é só remover os '#'
+#  Job para fazer o deploy no GitHub Pages
 #  deploy:
 #    needs: build-and-test
 #    permissions:
