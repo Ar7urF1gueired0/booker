@@ -14,9 +14,12 @@ Este projeto é um software de agendamento online para clínicas e pet shops. O 
 O objetivo do software é simplificar a gestão de agendamentos para as clínicas veterinárias, oferecendo uma plataforma intuitiva para os clientes e ferramentas administrativas eficientes para a equipe.
 
 ## Stacks
-Usaremos React e Node.js para desenvolver o projeto<br>
-Banco de dados: a decidir<br>
-Deploy: AWS<br>
+Usaremos React e Node.js para desenvolver o projeto <br>
+Banco de dados: PostgreSQL <br>
+Deploy: AWS <br>
+
+## Arquitetura
+Arquitetura limpa.
 
 ## Membros do grupo
 - Artur Figueiredo
