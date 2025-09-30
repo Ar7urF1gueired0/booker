@@ -23,11 +23,11 @@ coverage/
 # Build outputs
 dist/
 build/
-frontend/dist/
+src/frontend/dist/
 
 # Dependency directories
 node_modules/
-frontend/node_modules/
+src/frontend/node_modules/
 jspm_packages/
 
 # Package manager caches
