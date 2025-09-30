@@ -1,0 +1,75 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+*.lcov
+.nyc_output
+
+# Build outputs
+dist/
+build/
+frontend/dist/
+
+# Dependency directories
+node_modules/
+frontend/node_modules/
+jspm_packages/
+
+# Package manager caches
+.npm
+.yarn/
+.pnp.*
+
+# ESLint / Stylelint caches
+.eslintcache
+.stylelintcache
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Testing
+reports/
+.vscode-test
+
+# Tooling caches
+.cache/
+.parcel-cache/
+.fusebox/
+.serverless/
+.docusaurus/
+.svelte-kit/
+.vite/
+**/.vitepress/cache
+**/.vitepress/dist
+
+# Temporary files
+*.swp
+*.swo
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE settings
+.idea/
+.vscode/
+*.code-workspace
