@@ -1,1 +1,1 @@
-import '@testing-library/jest-dom/vitest';
+// Test environment setup placeholder. Add shared test hooks here if needed.
