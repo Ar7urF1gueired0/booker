@@ -1,52 +1,98 @@
-# Software de Agendamento para Clínicas Veterinárias
-Este projeto é um software de agendamento online para clínicas e pet shops. O sistema é um modelo escalável e adaptável que pode ser implementado em diversas clínicas, ajustando-se às suas necessidades específicas.
+# 🎾 Beach Tennis Championship
 
-### Funcionalidades Principais
- - Agendamento Online: Os clientes podem agendar consultas, exames ou serviços de banho e tosa. Um chat integrado ajuda a guiar o usuário durante o processo.
+Sistema de agendamento para campeonato de beach tennis.
 
-### Dois Tipos de Usuário:
+## 📁 Estrutura
 
- - Clientes: Podem criar um login para agendar e gerenciar seus próprios compromissos.
+```
+booker/ (root)
+├── frontend/          # Next.js + TypeScript + Tailwind
+│   ├── src/
+│   │   ├── app/       # Next.js app directory
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   └── styles/
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── tailwind.config.js
+│   └── README.md
+│
+└── backend/           # Express + TypeScript + Prisma
+    ├── src/
+    │   ├── index.ts   # Server entry
+    │   ├── routes/
+    │   ├── controllers/
+    │   └── services/
+    ├── prisma/
+    │   └── schema.prisma
+    ├── package.json
+    ├── tsconfig.json
+    └── README.md
+```
 
- - Administradores (Veterinários): Gerenciam suas agendas, podem agendar compromissos para os clientes, cadastrar novos horários e remover agendas.
+## 🚀 Quick Start
 
-## Objetivo
-O objetivo do software é simplificar a gestão de agendamentos para as clínicas veterinárias, oferecendo uma plataforma intuitiva para os clientes e ferramentas administrativas eficientes para a equipe.
+### Frontend
 
-## Stacks
-Node.js para uma boa tipagem no backend, onde teremos uma REST API<br>
-Prisma para ORM e PostgreSQL como banco de dados <br>
-React + Vite no frontend <br>
-Deploy: Render <br>
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## Arquitetura
-Arquitetura limpa:
-- apps/
-    - backend/
-        - src/
-            - main.ts
-            - adapters/
-            - application/
-            - domain/
-            - infra/
-            - shared/
-        - tests        
-    - frontend/
-        - src/
-            - app/
-            - features/
-            - components/
-            - hooks/
-            - services/
-            - assets
-        - tests
-- packages/
-- primsa/
-- scripts/
-- infra/
-- .github/workflows/
+Acesso: http://localhost:3000
 
-## Membros do grupo
+### Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+Acesso: http://localhost:3000/health
+
+## 📦 Tecnologias
+
+### Frontend
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- React 18
+
+### Backend
+- Express.js
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+
+## 🔧 Scripts
+
+### Frontend
+- `npm run dev` - Dev server
+- `npm run build` - Build production
+- `npm start` - Start production
+- `npm run lint` - ESLint check
+- `npm run format` - Prettier format
+
+### Backend
+- `npm run dev` - Dev server (ts-node)
+- `npm run build` - Build TypeScript
+- `npm start` - Run production
+- `npm run prisma:generate` - Generate Prisma client
+- `npm run prisma:migrate` - Run migrations
+
+## 📝 Próximos Passos
+
+1. Configurar PostgreSQL
+2. Implementar endpoints
+3. Conectar frontend com backend
+4. Adicionar autenticação
+5. Testes
+
+## 👥 Team
+
 - Artur Figueiredo
 - Douglas Machado Ribeiro
 - Francine Gonçalves Franco
