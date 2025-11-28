@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import tournamentRoutes from './routes/tournaments.ts';
+import matchRoutes from './routes/matches.ts';
+import userRoutes from './routes/users.ts';
 
 dotenv.config();
 
@@ -12,8 +15,9 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-// app.use('/api/tournaments', tournamentRoutes);
-// app.use('/api/matches', matchRoutes);
+app.use('/api/tournaments', tournamentRoutes);
+app.use('/api/matches', matchRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

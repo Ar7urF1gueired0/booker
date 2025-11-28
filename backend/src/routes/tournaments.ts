@@ -1,21 +1,21 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
+import { TournamentController } from '../controllers/TournamentController.ts';
 
 const router = Router();
 
-// GET /api/tournaments
-router.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'List tournaments' });
-});
+// GET /api/tournaments - List all tournaments
+router.get('/', TournamentController.getTournaments);
 
-// POST /api/tournaments
-router.post('/', (req: Request, res: Response) => {
-  res.status(201).json({ message: 'Tournament created' });
-});
+// POST /api/tournaments - Create a new tournament
+router.post('/', TournamentController.createTournament);
 
-// GET /api/tournaments/:id
-router.get('/:id', (req: Request, res: Response) => {
-  const { id } = req.params;
-  res.json({ message: `Get tournament ${id}` });
-});
+// GET /api/tournaments/:id - Get tournament by ID
+router.get('/:id', TournamentController.getTournamentById);
+
+// PUT /api/tournaments/:id - Update tournament
+router.put('/:id', TournamentController.updateTournament);
+
+// DELETE /api/tournaments/:id - Delete tournament
+router.delete('/:id', TournamentController.deleteTournament);
 
 export default router;
