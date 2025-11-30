@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// backend/prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
@@ -10,42 +9,185 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// --- ENUMS (Domínios fixos) ---
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum HandType {
+  RIGHT
+  LEFT
+}
+
+enum BackhandType {
+  ONE_HAND
+  TWO_HANDS
+}
+
+enum Level {
+  PRO
+  A
+  B
+  C
+}
+
+enum Status {
+  OPEN
+  ONGOING
+  FINISHED
+  CANCELED
+  SCHEDULED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+// --- MODELS (Tabelas) ---
+
 model User {
-  id    String     @id @default(cuid())
-  email String     @unique
-  name  String?
-  role  String     @default("player")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int       @id @default(autoincrement())
+  fullName     String
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(USER) // Aqui está a segurança do Admin
+  birthDate    DateTime?
+  gender       Gender?
+  locationCity String?
+  photoUrl     String?
+  coverUrl     String?
+  createdAt    DateTime  @default(now())
+
+  // Dados de Beach Tennis
+  forehand HandType     @default(RIGHT)
+  backhand BackhandType @default(ONE_HAND)
+  level    Level        @default(C)
+
+  // Relacionamentos
+  posts             Post[]
+  registrations     TournamentRegistration[] // Jogador principal
+  partnerRegs       TournamentRegistration[] @relation("PartnerRelation") // Como parceiro
+  matchParticipations MatchParticipant[]
+  achievements      UserAchievement[]
+  
+  // Admin: Torneios que este usuário criou
+  createdTournaments Tournament[] @relation("AdminCreated")
 
   @@map("users")
 }
 
+model Arena {
+  id           Int     @id @default(autoincrement())
+  name         String
+  address      String?
+  city         String?
+  contactPhone String?
+
+  tournaments Tournament[]
+  matches     Match[]
+
+  @@map("arenas")
+}
+
 model Tournament {
-  id    String     @id @default(cuid())
-  name  String
-  format String
-  courts Int
-  playersPerMatch Int
-  createdBy String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   Int       @id @default(autoincrement())
+  arenaId              Int
+  name                 String
+  startDate            DateTime
+  endDate              DateTime?
+  registrationDeadline DateTime?
+  categoryFilter       String?
+  status               Status    @default(OPEN)
+  
+  // Auditoria (Quem criou)
+  createdById          Int?
+  createdBy            User?     @relation("AdminCreated", fields: [createdById], references: [id])
+
+  arena         Arena                    @relation(fields: [arenaId], references: [id])
+  registrations TournamentRegistration[]
+  matches       Match[]
 
   @@map("tournaments")
 }
 
+model TournamentRegistration {
+  id             Int      @id @default(autoincrement())
+  tournamentId   Int
+  userId         Int
+  partnerId      Int?
+  registrationDate DateTime @default(now())
+
+  tournament Tournament @relation(fields: [tournamentId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+  partner    User?      @relation("PartnerRelation", fields: [partnerId], references: [id])
+
+  @@unique([tournamentId, userId])
+  @@map("tournament_registrations")
+}
+
 model Match {
-  id    String     @id @default(cuid())
-  tournamentId String
-  court Int
-  team1Players String[]
-  team2Players String[]
-  team1Score Int?
-  team2Score Int?
-  status String @default("scheduled")
-  scheduledAt DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  arenaId      Int
+  tournamentId Int?
+  matchDate    DateTime
+  status       Status   @default(SCHEDULED)
+  scoreResult  String?
+  winnerTeamId Int?
+
+  arena        Arena              @relation(fields: [arenaId], references: [id])
+  tournament   Tournament?        @relation(fields: [tournamentId], references: [id])
+  participants MatchParticipant[]
 
   @@map("matches")
+}
+
+model MatchParticipant {
+  matchId    Int
+  userId     Int
+  teamNumber Int // 1 ou 2
+
+  match Match @relation(fields: [matchId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@id([matchId, userId])
+  @@map("match_participants")
+}
+
+model Post {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  contentText String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("social_posts")
+}
+
+model Achievement {
+  id          Int     @id @default(autoincrement())
+  name        String
+  iconUrl     String?
+  description String?
+
+  users UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  userId        Int
+  achievementId Int
+  earnedDate    DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id])
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
+  @@id([userId, achievementId])
+  @@map("user_achievements")
 }
