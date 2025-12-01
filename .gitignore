@@ -27,7 +27,9 @@ src/frontend/dist/
 
 # Dependency directories
 node_modules/
-src/frontend/node_modules/
+.next/
+frontend/node_modules/
+frontend/.next/
 jspm_packages/
 
 # Package manager caches
