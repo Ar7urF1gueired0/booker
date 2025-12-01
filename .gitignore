@@ -24,6 +24,8 @@ coverage/
 dist/
 build/
 src/frontend/dist/
+.next/
+frontend/.next/
 
 # Dependency directories
 node_modules/
