@@ -1,15 +1,11 @@
 import { Response } from 'express';
 import { TournamentRegistrationService } from '../services/TournamentRegistrationService.ts';
-
-interface AuthRequest {
-  userId?: number;
-  userRole?: string;
-}
+import { AuthRequest } from '../middleware/authMiddleware.ts';
 
 const service = new TournamentRegistrationService();
 
 export class TournamentRegistrationController {
-  static async registerInTournament(req: AuthRequest & any, res: Response) {
+  static async registerInTournament(req: AuthRequest, res: Response) {
     try {
       const { tournamentId } = req.params;
       const { partnerId } = req.body;
@@ -42,7 +38,7 @@ export class TournamentRegistrationController {
     }
   }
 
-  static async getTournamentRegistrations(req: AuthRequest & any, res: Response) {
+  static async getTournamentRegistrations(req: AuthRequest, res: Response) {
     try {
       const { tournamentId } = req.params;
 
@@ -65,7 +61,7 @@ export class TournamentRegistrationController {
     }
   }
 
-  static async unregisterFromTournament(req: AuthRequest & any, res: Response) {
+  static async unregisterFromTournament(req: AuthRequest, res: Response) {
     try {
       const { tournamentId } = req.params;
       const userId = req.userId;
