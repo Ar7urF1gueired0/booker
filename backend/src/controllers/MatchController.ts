@@ -1,5 +1,17 @@
 import type { Request, Response } from 'express';
+import { Status } from '@prisma/client';
 import { MatchService } from '../services/MatchService.ts';
+
+const parseDate = (value?: string) => {
+  if (!value) return undefined;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+};
+
+const parseStatus = (value?: string): Status | undefined => {
+  if (!value) return undefined;
+  return Object.values(Status).includes(value as Status) ? (value as Status) : undefined;
+};
 
 export class MatchController {
   static async getMatches(req: Request, res: Response) {
@@ -14,7 +26,11 @@ export class MatchController {
 
   static async getMatchesByTournament(req: Request, res: Response) {
     try {
-      const { tournamentId } = req.params;
+      const tournamentId = Number(req.params.tournamentId);
+      if (Number.isNaN(tournamentId)) {
+        return res.status(400).json({ error: 'Invalid tournament id' });
+      }
+
       const matches = await MatchService.getMatchesByTournament(tournamentId);
       res.json({ data: matches, count: matches.length });
     } catch (error) {
@@ -25,18 +41,49 @@ export class MatchController {
 
   static async createMatch(req: Request, res: Response) {
     try {
-      const { tournamentId, court, team1Players, team2Players, scheduledAt } = req.body;
+      const arenaId = Number(req.body.arenaId);
+      const matchDate = parseDate(req.body.matchDate);
+      const tournamentId =
+        req.body.tournamentId !== undefined && req.body.tournamentId !== null
+          ? Number(req.body.tournamentId)
+          : undefined;
+      const status = parseStatus(req.body.status);
+      const winnerTeamId =
+        req.body.winnerTeamId !== undefined && req.body.winnerTeamId !== null
+          ? Number(req.body.winnerTeamId)
+          : undefined;
 
-      if (!tournamentId || !court || !team1Players || !team2Players || !scheduledAt) {
-        return res.status(400).json({ error: 'Missing required fields' });
+      if (Number.isNaN(arenaId) || !matchDate) {
+        return res.status(400).json({ error: 'Invalid arenaId or matchDate' });
+      }
+
+      if (
+        req.body.tournamentId !== undefined &&
+        req.body.tournamentId !== null &&
+        Number.isNaN(tournamentId)
+      ) {
+        return res.status(400).json({ error: 'Invalid tournament id' });
+      }
+
+      if (req.body.status && !status) {
+        return res.status(400).json({ error: 'Invalid status' });
+      }
+
+      if (
+        req.body.winnerTeamId !== undefined &&
+        req.body.winnerTeamId !== null &&
+        Number.isNaN(winnerTeamId)
+      ) {
+        return res.status(400).json({ error: 'Invalid winnerTeamId' });
       }
 
       const match = await MatchService.createMatch({
+        arenaId,
         tournamentId,
-        court: parseInt(court, 10),
-        team1Players: Array.isArray(team1Players) ? team1Players : [team1Players],
-        team2Players: Array.isArray(team2Players) ? team2Players : [team2Players],
-        scheduledAt: new Date(scheduledAt),
+        matchDate,
+        status,
+        scoreResult: req.body.scoreResult ?? null,
+        winnerTeamId,
       });
 
       res.status(201).json({ data: match });
@@ -48,7 +95,11 @@ export class MatchController {
 
   static async getMatchById(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = Number(req.params.id);
+      if (Number.isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid match id' });
+      }
+
       const match = await MatchService.getMatchById(id);
 
       if (!match) {
@@ -64,19 +115,66 @@ export class MatchController {
 
   static async updateMatch(req: Request, res: Response) {
     try {
-      const { id } = req.params;
-      const { court, team1Players, team2Players, team1Score, team2Score, status, scheduledAt } = req.body;
+      const id = Number(req.params.id);
+      if (Number.isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid match id' });
+      }
 
-      const updateData: any = {};
-      if (court !== undefined) updateData.court = parseInt(court, 10);
-      if (team1Players !== undefined) updateData.team1Players = Array.isArray(team1Players) ? team1Players : [team1Players];
-      if (team2Players !== undefined) updateData.team2Players = Array.isArray(team2Players) ? team2Players : [team2Players];
-      if (team1Score !== undefined) updateData.team1Score = parseInt(team1Score, 10);
-      if (team2Score !== undefined) updateData.team2Score = parseInt(team2Score, 10);
-      if (status !== undefined) updateData.status = status;
-      if (scheduledAt !== undefined) updateData.scheduledAt = new Date(scheduledAt);
+      const payload: any = {};
 
-      const match = await MatchService.updateMatch(id, updateData);
+      if (req.body.arenaId !== undefined) {
+        const arenaId = Number(req.body.arenaId);
+        if (Number.isNaN(arenaId)) {
+          return res.status(400).json({ error: 'Invalid arenaId' });
+        }
+        payload.arenaId = arenaId;
+      }
+
+      if (req.body.tournamentId !== undefined) {
+        if (req.body.tournamentId === null) {
+          payload.tournamentId = null;
+        } else {
+          const tournamentId = Number(req.body.tournamentId);
+          if (Number.isNaN(tournamentId)) {
+            return res.status(400).json({ error: 'Invalid tournament id' });
+          }
+          payload.tournamentId = tournamentId;
+        }
+      }
+
+      if (req.body.matchDate !== undefined) {
+        const matchDate = parseDate(req.body.matchDate);
+        if (!matchDate) {
+          return res.status(400).json({ error: 'Invalid matchDate' });
+        }
+        payload.matchDate = matchDate;
+      }
+
+      if (req.body.status !== undefined) {
+        const status = parseStatus(req.body.status);
+        if (!status) {
+          return res.status(400).json({ error: 'Invalid status' });
+        }
+        payload.status = status;
+      }
+
+      if (req.body.scoreResult !== undefined) {
+        payload.scoreResult = req.body.scoreResult ?? null;
+      }
+
+      if (req.body.winnerTeamId !== undefined) {
+        if (req.body.winnerTeamId === null) {
+          payload.winnerTeamId = null;
+        } else {
+          const winnerTeamId = Number(req.body.winnerTeamId);
+          if (Number.isNaN(winnerTeamId)) {
+            return res.status(400).json({ error: 'Invalid winnerTeamId' });
+          }
+          payload.winnerTeamId = winnerTeamId;
+        }
+      }
+
+      const match = await MatchService.updateMatch(id, payload);
       res.json({ data: match });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to update match';
@@ -86,7 +184,11 @@ export class MatchController {
 
   static async deleteMatch(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = Number(req.params.id);
+      if (Number.isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid match id' });
+      }
+
       await MatchService.deleteMatch(id);
       res.json({ message: 'Match deleted successfully' });
     } catch (error) {
