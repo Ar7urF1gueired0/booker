@@ -9,6 +9,7 @@ interface User {
   email: string;
   fullName: string;
   role: string;
+  photoUrl?: string; // Adicionei opcional para não quebrar se faltar
 }
 
 export const useAuth = () => {
@@ -17,7 +18,7 @@ export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Carregar dados do localStorage ao montar
+  // Carregar dados do localStorage ao montar (F5)
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
@@ -30,8 +31,41 @@ export const useAuth = () => {
     setIsLoading(false);
   }, []);
 
+  // --- AQUI ESTÁ A MÁGICA DO MOCK ---
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
+    
+    // 1. Simulamos um delay de 1 segundo (loading)
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // 2. Criamos o Usuário Falso
+    const mockUser: User = {
+      id: 1,
+      email: email, // O email que você digitou
+      fullName: "Joana Alves Pereira",
+      role: "USER",
+      photoUrl: "https://i.pravatar.cc/150?img=5" // Foto aleatória
+    };
+
+    const mockToken = "token-fake-123456";
+
+    // 3. Salvamos no estado e no LocalStorage
+    try {
+      setToken(mockToken);
+      setUser(mockUser);
+      localStorage.setItem('token', mockToken);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      
+      // 4. Redireciona para o Dashboard
+      router.push('/dashboard');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+
+    // --- CÓDIGO ORIGINAL (Guardado para o futuro) ---
+    /*
     try {
       const result = await apiClient.login(email, password);
       setToken(result.token);
@@ -44,17 +78,23 @@ export const useAuth = () => {
     } finally {
       setIsLoading(false);
     }
+    */
   }, [router]);
 
   const register = useCallback(async (fullName: string, email: string, password: string) => {
+    // Você pode mockar o registro também se quiser, seguindo a lógica acima!
     setIsLoading(true);
     try {
-      const result = await apiClient.register(fullName, email, password);
-      setToken(result.token);
-      setUser(result.user);
-      localStorage.setItem('token', result.token);
-      localStorage.setItem('user', JSON.stringify(result.user));
-      router.push('/dashboard');
+        // Mock rápido para registro também:
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const mockUser = { id: 2, email, fullName, role: 'USER' };
+        const mockToken = "token-fake-register";
+        
+        setToken(mockToken);
+        setUser(mockUser);
+        localStorage.setItem('token', mockToken);
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        router.push('/dashboard');
     } catch (error) {
       throw error;
     } finally {
