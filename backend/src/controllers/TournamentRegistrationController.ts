@@ -1,6 +1,6 @@
-import { Response } from 'express';
+import type { Response } from 'express';
 import { TournamentRegistrationService } from '../services/TournamentRegistrationService.ts';
-import { AuthRequest } from '../middleware/authMiddleware.ts';
+import type { AuthRequest } from '../middleware/authMiddleware.ts';
 
 const service = new TournamentRegistrationService();
 
