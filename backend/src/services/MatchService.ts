@@ -1,79 +1,86 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Status } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export interface CreateMatchInput {
-  tournamentId: string;
-  court: number;
-  team1Players: string[];
-  team2Players: string[];
-  scheduledAt: Date;
+  arenaId: number;
+  tournamentId?: number;
+  matchDate: Date;
+  status?: Status;
+  scoreResult?: string | null;
+  winnerTeamId?: number | null;
 }
 
 export interface UpdateMatchInput {
-  court?: number;
-  team1Players?: string[];
-  team2Players?: string[];
-  team1Score?: number;
-  team2Score?: number;
-  status?: string;
-  scheduledAt?: Date;
+  arenaId?: number;
+  tournamentId?: number | null;
+  matchDate?: Date;
+  status?: Status;
+  scoreResult?: string | null;
+  winnerTeamId?: number | null;
 }
+
+const matchInclude = {
+  arena: true,
+  tournament: {
+    select: {
+      id: true,
+      name: true,
+      startDate: true,
+    },
+  },
+};
 
 export class MatchService {
   static async createMatch(data: CreateMatchInput) {
-    if (!data.tournamentId || !data.court || !data.team1Players || !data.team2Players || !data.scheduledAt) {
-      throw new Error('All fields are required');
+    if (!data.arenaId || !data.matchDate) {
+      throw new Error('Missing required fields');
     }
 
     return prisma.match.create({
       data: {
-        tournamentId: data.tournamentId,
-        court: data.court,
-        team1Players: data.team1Players,
-        team2Players: data.team2Players,
-        scheduledAt: new Date(data.scheduledAt),
-        status: 'scheduled',
+        arenaId: data.arenaId,
+        tournamentId: data.tournamentId ?? null,
+        matchDate: data.matchDate,
+        status: data.status ?? Status.SCHEDULED,
+        scoreResult: data.scoreResult ?? null,
+        winnerTeamId: data.winnerTeamId ?? null,
       },
+      include: matchInclude,
     });
   }
 
   static async getMatches() {
     return prisma.match.findMany({
-      orderBy: { scheduledAt: 'asc' },
+      orderBy: { matchDate: 'asc' },
+      include: matchInclude,
     });
   }
 
-  static async getMatchesByTournament(tournamentId: string) {
+  static async getMatchesByTournament(tournamentId: number) {
     return prisma.match.findMany({
       where: { tournamentId },
-      orderBy: { scheduledAt: 'asc' },
+      orderBy: { matchDate: 'asc' },
+      include: matchInclude,
     });
   }
 
-  static async getMatchById(id: string) {
+  static async getMatchById(id: number) {
     return prisma.match.findUnique({
       where: { id },
+      include: matchInclude,
     });
   }
 
-  static async updateMatch(id: string, data: UpdateMatchInput) {
-    const updateData: any = {};
-    if (data.court !== undefined) updateData.court = data.court;
-    if (data.team1Players !== undefined) updateData.team1Players = data.team1Players;
-    if (data.team2Players !== undefined) updateData.team2Players = data.team2Players;
-    if (data.team1Score !== undefined) updateData.team1Score = data.team1Score;
-    if (data.team2Score !== undefined) updateData.team2Score = data.team2Score;
-    if (data.status !== undefined) updateData.status = data.status;
-    if (data.scheduledAt !== undefined) updateData.scheduledAt = new Date(data.scheduledAt);
-
+  static async updateMatch(id: number, data: UpdateMatchInput) {
     return prisma.match.update({
       where: { id },
-      data: updateData,
+      data,
+      include: matchInclude,
     });
   }
 
-  static async deleteMatch(id: string) {
+  static async deleteMatch(id: number) {
     return prisma.match.delete({
       where: { id },
     });

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Status } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -39,6 +39,19 @@ export class TournamentRegistrationService {
       throw new Error('Tournament not found');
     }
 
+    if (tournament.status !== Status.OPEN) {
+      throw new Error('Tournament not open for registrations');
+    }
+
+    const now = new Date();
+    if (tournament.registrationDeadline && tournament.registrationDeadline < now) {
+      throw new Error('Registration deadline has passed');
+    }
+
+    if (tournament.startDate < now) {
+      throw new Error('Tournament already started');
+    }
+
     // Verificar se o usuário já está inscrito
     const existingRegistration = await prisma.tournamentRegistration.findUnique({
       where: {
@@ -55,6 +68,10 @@ export class TournamentRegistrationService {
 
     // Verificar se o parceiro existe (se fornecido)
     if (data.partnerId) {
+      if (data.partnerId === data.userId) {
+        throw new Error('Partner cannot be the same as the user');
+      }
+
       const partner = await prisma.user.findUnique({
         where: { id: data.partnerId },
       });

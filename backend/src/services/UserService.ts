@@ -1,22 +1,24 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export interface CreateUserInput {
+  fullName: string;
   email: string;
-  name?: string;
-  role?: string;
+  passwordHash: string;
+  role?: Role;
 }
 
 export interface UpdateUserInput {
-  name?: string;
-  role?: string;
+  fullName?: string;
+  role?: Role;
+  locationCity?: string | null;
 }
 
 export class UserService {
   static async createUser(data: CreateUserInput) {
-    if (!data.email) {
-      throw new Error('Email is required');
+    if (!data.email || !data.fullName || !data.passwordHash) {
+      throw new Error('Missing required user fields');
     }
 
     // Check if email already exists
@@ -30,9 +32,10 @@ export class UserService {
 
     return prisma.user.create({
       data: {
+        fullName: data.fullName,
         email: data.email,
-        name: data.name || null,
-        role: data.role || 'player',
+        passwordHash: data.passwordHash,
+        role: data.role ?? Role.USER,
       },
     });
   }
@@ -43,7 +46,7 @@ export class UserService {
     });
   }
 
-  static async getUserById(id: string) {
+  static async getUserById(id: number) {
     return prisma.user.findUnique({
       where: { id },
     });
@@ -55,18 +58,14 @@ export class UserService {
     });
   }
 
-  static async updateUser(id: string, data: UpdateUserInput) {
-    const updateData: any = {};
-    if (data.name !== undefined) updateData.name = data.name;
-    if (data.role !== undefined) updateData.role = data.role;
-
+  static async updateUser(id: number, data: UpdateUserInput) {
     return prisma.user.update({
       where: { id },
-      data: updateData,
+      data,
     });
   }
 
-  static async deleteUser(id: string) {
+  static async deleteUser(id: number) {
     return prisma.user.delete({
       where: { id },
     });

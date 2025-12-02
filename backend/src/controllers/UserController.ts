@@ -1,4 +1,6 @@
 import type { Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import { Role } from '@prisma/client';
 import { UserService } from '../services/UserService.ts';
 
 export class UserController {
@@ -14,16 +16,21 @@ export class UserController {
 
   static async createUser(req: Request, res: Response) {
     try {
-      const { email, name, role } = req.body;
+      const { email, fullName, password, role } = req.body;
 
-      if (!email) {
-        return res.status(400).json({ error: 'Email is required' });
+      if (!email || !fullName || !password) {
+        return res.status(400).json({ error: 'Missing required fields' });
       }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const roleValue =
+        role && Object.values(Role).includes(role as Role) ? (role as Role) : Role.USER;
 
       const user = await UserService.createUser({
         email,
-        name: name || undefined,
-        role: role || 'player',
+        fullName,
+        passwordHash: hashedPassword,
+        role: roleValue,
       });
 
       res.status(201).json({ data: user });
@@ -36,7 +43,12 @@ export class UserController {
   static async getUserById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const user = await UserService.getUserById(id);
+      const parsedId = Number(id);
+      if (Number.isNaN(parsedId)) {
+        return res.status(400).json({ error: 'Invalid user id' });
+      }
+
+      const user = await UserService.getUserById(parsedId);
 
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -68,13 +80,24 @@ export class UserController {
   static async updateUser(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { name, role } = req.body;
+      const parsedId = Number(id);
+      if (Number.isNaN(parsedId)) {
+        return res.status(400).json({ error: 'Invalid user id' });
+      }
 
       const updateData: any = {};
-      if (name !== undefined) updateData.name = name;
-      if (role !== undefined) updateData.role = role;
+      if (req.body.fullName !== undefined) updateData.fullName = req.body.fullName;
+      if (req.body.locationCity !== undefined) {
+        updateData.locationCity = req.body.locationCity ?? null;
+      }
+      if (req.body.role !== undefined) {
+        if (!Object.values(Role).includes(req.body.role as Role)) {
+          return res.status(400).json({ error: 'Invalid role' });
+        }
+        updateData.role = req.body.role as Role;
+      }
 
-      const user = await UserService.updateUser(id, updateData);
+      const user = await UserService.updateUser(parsedId, updateData);
       res.json({ data: user });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to update user';
@@ -85,7 +108,12 @@ export class UserController {
   static async deleteUser(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      await UserService.deleteUser(id);
+      const parsedId = Number(id);
+      if (Number.isNaN(parsedId)) {
+        return res.status(400).json({ error: 'Invalid user id' });
+      }
+
+      await UserService.deleteUser(parsedId);
       res.json({ message: 'User deleted successfully' });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to delete user';

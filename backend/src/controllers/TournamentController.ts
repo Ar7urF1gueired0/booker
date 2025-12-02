@@ -1,10 +1,50 @@
 import type { Request, Response } from 'express';
+import { Status } from '@prisma/client';
 import { TournamentService } from '../services/TournamentService.ts';
+import type { TournamentFilters, UpdateTournamentInput } from '../services/TournamentService.ts';
+import type { AuthRequest } from '../middleware/authMiddleware.ts';
+
+const parseDate = (value?: string) => {
+  if (!value) return undefined;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+};
+
+const parseStatus = (value?: string): Status | undefined => {
+  if (!value) return undefined;
+  return Object.values(Status).includes(value as Status) ? (value as Status) : undefined;
+};
 
 export class TournamentController {
   static async getTournaments(req: Request, res: Response) {
     try {
-      const tournaments = await TournamentService.getTournaments();
+      const filters: TournamentFilters = {};
+
+      if (typeof req.query.status === 'string') {
+        const status = parseStatus(req.query.status);
+        if (!status) {
+          return res.status(400).json({ error: 'Invalid status filter' });
+        }
+        filters.status = status;
+      }
+
+      if (typeof req.query.from === 'string') {
+        const from = parseDate(req.query.from);
+        if (!from) {
+          return res.status(400).json({ error: 'Invalid from date' });
+        }
+        filters.from = from;
+      }
+
+      if (typeof req.query.to === 'string') {
+        const to = parseDate(req.query.to);
+        if (!to) {
+          return res.status(400).json({ error: 'Invalid to date' });
+        }
+        filters.to = to;
+      }
+
+      const tournaments = await TournamentService.getTournaments(filters);
       res.json({ data: tournaments, count: tournaments.length });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to fetch tournaments';
@@ -12,20 +52,35 @@ export class TournamentController {
     }
   }
 
-  static async createTournament(req: Request, res: Response) {
+  static async createTournament(req: AuthRequest, res: Response) {
     try {
-      const { name, format, courts, playersPerMatch, createdBy } = req.body;
+      if (req.userRole !== 'ADMIN') {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
 
-      if (!name || !format || !courts || !playersPerMatch || !createdBy) {
+      const arenaId = Number(req.body.arenaId);
+      const startDate = parseDate(req.body.startDate);
+      const endDate = parseDate(req.body.endDate);
+      const registrationDeadline = parseDate(req.body.registrationDeadline);
+      const status = parseStatus(req.body.status);
+
+      if (!req.body.name || Number.isNaN(arenaId) || !startDate) {
         return res.status(400).json({ error: 'Missing required fields' });
       }
 
+      if (req.body.status && !status) {
+        return res.status(400).json({ error: 'Invalid status' });
+      }
+
       const tournament = await TournamentService.createTournament({
-        name,
-        format,
-        courts: parseInt(courts, 10),
-        playersPerMatch: parseInt(playersPerMatch, 10),
-        createdBy,
+        name: req.body.name,
+        arenaId,
+        startDate,
+        endDate,
+        registrationDeadline,
+        categoryFilter: req.body.categoryFilter ?? null,
+        status,
+        createdById: req.userId ?? null,
       });
 
       res.status(201).json({ data: tournament });
@@ -37,7 +92,11 @@ export class TournamentController {
 
   static async getTournamentById(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = Number(req.params.id);
+      if (Number.isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid tournament id' });
+      }
+
       const tournament = await TournamentService.getTournamentById(id);
 
       if (!tournament) {
@@ -51,18 +110,71 @@ export class TournamentController {
     }
   }
 
-  static async updateTournament(req: Request, res: Response) {
+  static async updateTournament(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
-      const { name, format, courts, playersPerMatch } = req.body;
+      const id = Number(req.params.id);
+      if (Number.isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid tournament id' });
+      }
 
-      const updateData: Record<string, any> = {};
-      if (name) updateData.name = name;
-      if (format) updateData.format = format;
-      if (courts) updateData.courts = parseInt(courts, 10);
-      if (playersPerMatch) updateData.playersPerMatch = parseInt(playersPerMatch, 10);
+      const existing = await TournamentService.getTournamentById(id);
+      if (!existing) {
+        return res.status(404).json({ error: 'Tournament not found' });
+      }
 
-      const tournament = await TournamentService.updateTournament(id, updateData);
+      if (req.userRole !== 'ADMIN' && existing.createdById !== req.userId) {
+        return res.status(403).json({ error: 'Only admins or tournament owners can edit' });
+      }
+
+      const payload: UpdateTournamentInput = {};
+
+      if (req.body.name) payload.name = req.body.name;
+
+      if (req.body.arenaId !== undefined) {
+        const arenaId = Number(req.body.arenaId);
+        if (Number.isNaN(arenaId)) {
+          return res.status(400).json({ error: 'Invalid arenaId' });
+        }
+        payload.arenaId = arenaId;
+      }
+
+      if (req.body.startDate) {
+        const startDate = parseDate(req.body.startDate);
+        if (!startDate) {
+          return res.status(400).json({ error: 'Invalid startDate' });
+        }
+        payload.startDate = startDate;
+      }
+
+      if (req.body.endDate !== undefined) {
+        const endDate = parseDate(req.body.endDate);
+        if (req.body.endDate && !endDate) {
+          return res.status(400).json({ error: 'Invalid endDate' });
+        }
+        payload.endDate = endDate ?? null;
+      }
+
+      if (req.body.registrationDeadline !== undefined) {
+        const registrationDeadline = parseDate(req.body.registrationDeadline);
+        if (req.body.registrationDeadline && !registrationDeadline) {
+          return res.status(400).json({ error: 'Invalid registrationDeadline' });
+        }
+        payload.registrationDeadline = registrationDeadline ?? null;
+      }
+
+      if (req.body.categoryFilter !== undefined) {
+        payload.categoryFilter = req.body.categoryFilter ?? null;
+      }
+
+      if (req.body.status !== undefined) {
+        const status = parseStatus(req.body.status);
+        if (!status) {
+          return res.status(400).json({ error: 'Invalid status' });
+        }
+        payload.status = status;
+      }
+
+      const tournament = await TournamentService.updateTournament(id, payload);
       res.json({ data: tournament });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to update tournament';
@@ -70,9 +182,22 @@ export class TournamentController {
     }
   }
 
-  static async deleteTournament(req: Request, res: Response) {
+  static async deleteTournament(req: AuthRequest, res: Response) {
     try {
-      const { id } = req.params;
+      const id = Number(req.params.id);
+      if (Number.isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid tournament id' });
+      }
+
+      const existing = await TournamentService.getTournamentById(id);
+      if (!existing) {
+        return res.status(404).json({ error: 'Tournament not found' });
+      }
+
+      if (req.userRole !== 'ADMIN' && existing.createdById !== req.userId) {
+        return res.status(403).json({ error: 'Only admins or tournament owners can delete' });
+      }
+
       await TournamentService.deleteTournament(id);
       res.json({ message: 'Tournament deleted successfully' });
     } catch (error) {
