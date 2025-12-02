@@ -1,11 +1,13 @@
 import express from 'express';
 import { TournamentRegistrationController } from '../controllers/TournamentRegistrationController.ts';
+import { authMiddleware } from '../middleware/authMiddleware.ts';
 
 const router = express.Router();
 
-// POST /api/registrations/:tournamentId/register - Inscrever usuário
+// POST /api/registrations/:tournamentId/register - Inscrever usuário (requer autenticação)
 router.post(
   '/:tournamentId/register',
+  authMiddleware,
   TournamentRegistrationController.registerInTournament
 );
 
@@ -15,9 +17,10 @@ router.get(
   TournamentRegistrationController.getTournamentRegistrations
 );
 
-// DELETE /api/registrations/:tournamentId/unregister - Desinscrever usuário
+// DELETE /api/registrations/:tournamentId/unregister - Desinscrever usuário (requer autenticação)
 router.delete(
   '/:tournamentId/unregister',
+  authMiddleware,
   TournamentRegistrationController.unregisterFromTournament
 );
 
