@@ -272,7 +272,6 @@ export default function ProfilePage() {
               </p>
               <h2 className="text-xl font-bold text-gray-900">Informações básicas</h2>
             </div>
-            <span className="text-xs font-semibold text-gray-400">Fonte: sessão autenticada</span>
           </div>
 
           <dl className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -289,14 +288,6 @@ export default function ProfilePage() {
               </div>
             ))}
           </dl>
-        </section>
-
-        <section className="rounded-3xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
-          <h3 className="text-lg font-semibold text-gray-800">Mais dados em breve</h3>
-          <p className="mt-2 text-sm text-gray-500">
-            Ainda não coletamos informações adicionais (gênero, idade, habilidades ou conquistas).
-            Assim que estiverem disponíveis na API, elas aparecerão aqui automaticamente.
-          </p>
         </section>
       </div>
 
