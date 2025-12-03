@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon --watch src --exec \"node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts\"",
-    "build": "npm run prisma:generate",
+    "build": "npm run prisma:generate && npm run prisma:migrate",
     "start": "tsx src/index.ts",
     "start:prod": "node --import tsx src/index.ts",
     "prisma:generate": "prisma generate",
