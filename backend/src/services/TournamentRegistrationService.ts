@@ -111,11 +111,14 @@ export class TournamentRegistrationService {
 
   async getTournamentRegistrations(tournamentId: number) {
     // Verificar se o torneio existe
-    const tournament = await prisma.tournament.findUnique({
+    console.log('Fetching registrations for tournament ID:', tournamentId);
+    const tournament = await prisma.tournamentRegistration.findUnique({
       where: { id: tournamentId },
     });
 
     if (!tournament) {
+      console.log('Tournament not found for ID:', tournamentId);
+      return [];
       throw new Error('Tournament not found');
     }
 

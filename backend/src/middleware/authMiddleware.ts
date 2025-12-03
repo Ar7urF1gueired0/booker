@@ -19,6 +19,8 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
 
     const decoded = jwt.verify(token, jwtSecret) as any;
 
+    console.log('Decoded JWT:', decoded);
+
     req.userId = decoded.userId;
     req.userRole = decoded.role;
 
@@ -29,6 +31,8 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
 };
 
 export const adminMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+  console.log('User role:', req.userRole);
+  
   if (req.userRole !== 'ADMIN') {
     return res.status(403).json({ error: 'Admin access required' });
   }

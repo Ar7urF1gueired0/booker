@@ -102,8 +102,10 @@ export class MatchController {
 
       const match = await MatchService.getMatchById(id);
 
+      console.log('Fetched match:', match);
+
       if (!match) {
-        return res.status(404).json({ error: 'Match not found' });
+        throw res.status(404).json({ error: 'Match not found' });
       }
 
       res.json({ data: match });

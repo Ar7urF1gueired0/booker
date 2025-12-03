@@ -66,10 +66,21 @@ export class MatchService {
   }
 
   static async getMatchById(id: number) {
-    return prisma.match.findUnique({
+    console.log('Fetching match with ID:', id);
+    
+    const match = await prisma.match.findFirst({
       where: { id },
       include: matchInclude,
     });
+
+    if (!match) {
+      console.log('Match not found for ID:', id);
+      throw new Error('Match not found');
+    }
+
+    console.log('Match found:', match);
+
+    return match;
   }
 
   static async updateMatch(id: number, data: UpdateMatchInput) {

@@ -126,7 +126,7 @@ model TournamentRegistration {
   partner    User?      @relation("PartnerRelation", fields: [partnerId], references: [id])
 
   @@unique([tournamentId, userId])
-  @@map("tournament_registrations")
+  @@map("tournamentRegistrations")
 }
 
 model Match {
@@ -142,7 +142,7 @@ model Match {
   tournament   Tournament?        @relation(fields: [tournamentId], references: [id])
   participants MatchParticipant[]
 
-  @@map("matches")
+  @@map("match")
 }
 
 model MatchParticipant {

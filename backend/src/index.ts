@@ -10,7 +10,7 @@ import userRoutes from './routes/users.ts';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 // Middleware
 app.use(cors());
@@ -29,5 +29,5 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🎾 Backend running on http://localhost:${PORT}`);
+  console.log(`🎾 Backend running on http://localhost:${PORT} -> http://localhost:${PORT}/health`);
 });
