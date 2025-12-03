@@ -8,6 +8,7 @@ import matchRoutes from './routes/matches';
 import userRoutes from './routes/users';
 import postRoutes from './routes/posts';
 import arenaRoutes from './routes/arenas';
+import process from 'process';
 
 dotenv.config();
 
