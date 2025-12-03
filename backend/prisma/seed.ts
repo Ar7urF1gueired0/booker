@@ -1,6 +1,7 @@
-import process from "node:process";
+/// <reference types="node" />
+
 import { PrismaClient, Role, Status } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import * as bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
