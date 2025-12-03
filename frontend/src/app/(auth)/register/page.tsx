@@ -4,11 +4,16 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 
+type GenderOption = 'MALE' | 'FEMALE' | 'OTHER';
+
 export default function RegisterPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [gender, setGender] = useState<GenderOption | ''>('');
+  const [birthDate, setBirthDate] = useState('');
+  const [locationCity, setLocationCity] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
@@ -27,10 +32,35 @@ export default function RegisterPage() {
       return;
     }
 
+    if (!gender) {
+      setError('Selecione um gênero');
+      return;
+    }
+
+    if (!birthDate) {
+      setError('Informe sua data de nascimento');
+      return;
+    }
+
+    if (!locationCity.trim()) {
+      setError('Informe sua cidade');
+      return;
+    }
+
+    const normalizedGender = gender as GenderOption;
+    const normalizedCity = locationCity.trim();
+
     setIsLoading(true);
 
     try {
-      await register(fullName, email, password);
+      await register({
+        fullName,
+        email,
+        password,
+        gender: normalizedGender,
+        birthDate,
+        locationCity: normalizedCity,
+      });
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer cadastro');
     } finally {
@@ -131,6 +161,46 @@ export default function RegisterPage() {
                   placeholder="Informe seu e-mail"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">Gênero</label>
+                  <select
+                    value={gender}
+                    onChange={e => setGender(e.target.value as GenderOption | '')}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+                  >
+                    <option value="">Selecione</option>
+                    <option value="FEMALE">Feminino</option>
+                    <option value="MALE">Masculino</option>
+                    <option value="OTHER">Outro</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">Data de Nascimento</label>
+                  <input
+                    type="date"
+                    value={birthDate}
+                    onChange={e => setBirthDate(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">Cidade</label>
+                <input
+                  type="text"
+                  placeholder="Informe sua cidade"
+                  value={locationCity}
+                  onChange={e => setLocationCity(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />

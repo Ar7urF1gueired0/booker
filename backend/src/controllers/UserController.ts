@@ -90,6 +90,16 @@ export class UserController {
       if (req.body.locationCity !== undefined) {
         updateData.locationCity = req.body.locationCity ?? null;
       }
+      if (req.body.photoUrl !== undefined) {
+        const photoValue = req.body.photoUrl;
+        if (photoValue === null || photoValue === '') {
+          updateData.photoUrl = null;
+        } else if (typeof photoValue === 'string') {
+          updateData.photoUrl = photoValue;
+        } else {
+          return res.status(400).json({ error: 'Invalid photoUrl' });
+        }
+      }
       if (req.body.role !== undefined) {
         if (!Object.values(Role).includes(req.body.role as Role)) {
           return res.status(400).json({ error: 'Invalid role' });

@@ -2,7 +2,7 @@
 
 import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiClient, setApiAuthToken } from '@/lib/api';
+import { RegisterPayload, UpdateUserPayload, apiClient, setApiAuthToken } from '@/lib/api';
 
 interface User {
   id: number;
@@ -21,8 +21,9 @@ interface AuthContextValue {
   user: User | null;
   token: string | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<AuthSession>;
-  register: (fullName: string, email: string, password: string) => Promise<AuthSession>;
+  login: (_email: string, _password: string) => Promise<AuthSession>;
+  register: (_data: RegisterPayload) => Promise<AuthSession>;
+  updateProfile: (_data: UpdateUserPayload) => Promise<User>;
   logout: () => void;
 }
 
@@ -121,10 +122,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const register = useCallback(
-    async (fullName: string, email: string, password: string) => {
+    async (data: RegisterPayload) => {
       setIsLoading(true);
       try {
-        const result = (await apiClient.register(fullName, email, password)) as AuthSession;
+        const result = (await apiClient.register(data)) as AuthSession;
         applySession(result);
         router.push('/dashboard');
         return result;
@@ -135,6 +136,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     },
     [applySession, router]
+  );
+
+  const updateProfile = useCallback(
+    async (data: UpdateUserPayload) => {
+      if (!user || !token) {
+        throw new Error('Sua sessão expirou, faça login novamente.');
+      }
+      setIsLoading(true);
+      try {
+        const response = (await apiClient.updateUser(user.id, data)) as { data: User };
+        const updatedUser = response?.data;
+        if (!updatedUser) {
+          throw new Error('Resposta inválida do servidor');
+        }
+        applySession({
+          token,
+          user: {
+            ...user,
+            ...updatedUser,
+          },
+        });
+        return updatedUser;
+      } catch (error) {
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [user, token, applySession]
   );
 
   const logout = useCallback(() => {
@@ -148,6 +178,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading,
     login,
     register,
+    updateProfile,
     logout,
   };
 

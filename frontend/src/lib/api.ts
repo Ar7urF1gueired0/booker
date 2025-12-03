@@ -2,6 +2,22 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api';
 
 let authToken: string | null = null;
 
+export type RegisterPayload = {
+  fullName: string;
+  email: string;
+  password: string;
+  gender: 'MALE' | 'FEMALE' | 'OTHER';
+  birthDate: string;
+  locationCity: string;
+};
+
+export type UpdateUserPayload = Partial<{
+  fullName: string;
+  locationCity: string | null;
+  photoUrl: string | null;
+  role: 'ADMIN' | 'USER';
+}>;
+
 export const setApiAuthToken = (token: string | null) => {
   authToken = token;
 };
@@ -41,10 +57,17 @@ export const apiClient = {
     });
   },
 
-  async register(fullName: string, email: string, password: string) {
+  async register(data: RegisterPayload) {
     return this.request('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ fullName, email, password }),
+      body: JSON.stringify(data),
+    });
+  },
+
+  async updateUser(userId: number, data: UpdateUserPayload) {
+    return this.request(`/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
     });
   },
 
