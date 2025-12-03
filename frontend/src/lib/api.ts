@@ -52,8 +52,27 @@ export const apiClient = {
     return this.request('/tournaments');
   },
 
+  async getMyTournaments() {
+    return this.request('/tournaments/my');
+  },
+
   async getTournament(id: number) {
     return this.request(`/tournaments/${id}`);
+  },
+
+  async createTournament(tournamentData: {
+    name: string;
+    arenaId: number;
+    startDate: string;
+    endDate?: string;
+    registrationDeadline?: string;
+    categoryFilter?: string;
+    status?: string;
+  }) {
+    return this.request('/tournaments', {
+      method: 'POST',
+      body: JSON.stringify(tournamentData),
+    });
   },
 
   async registerTournament(tournamentId: number, partnerId?: number) {
@@ -76,5 +95,9 @@ export const apiClient = {
       method: 'POST',
       body: JSON.stringify(postData),
     });
-},
+  },
+
+  async getArenas() {
+    return this.request('/arenas');
+  },
 };

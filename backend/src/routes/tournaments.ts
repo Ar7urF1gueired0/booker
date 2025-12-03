@@ -1,22 +1,25 @@
-import { Router } from 'express';
-import { TournamentController } from '../controllers/TournamentController.ts';
-import { authMiddleware } from '../middleware/authMiddleware.ts';
+import { Router } from "express";
+import { TournamentController } from "../controllers/TournamentController.ts";
+import { authMiddleware } from "../middleware/authMiddleware.ts";
 
 const router = Router();
 
 // GET /api/tournaments - List all tournaments
-router.get('/', TournamentController.getTournaments);
+router.get("/", TournamentController.getTournaments);
 
 // POST /api/tournaments - Create a new tournament
-router.post('/', authMiddleware, TournamentController.createTournament);
+router.post("/", authMiddleware, TournamentController.createTournament);
+
+// GET /api/tournaments/my - Get my tournaments (DEVE vir ANTES de /:id)
+router.get("/my", authMiddleware, TournamentController.getMyTournaments);
 
 // GET /api/tournaments/:id - Get tournament by ID
-router.get('/:id', TournamentController.getTournamentById);
+router.get("/:id", TournamentController.getTournamentById);
 
 // PUT /api/tournaments/:id - Update tournament
-router.put('/:id', authMiddleware, TournamentController.updateTournament);
+router.put("/:id", authMiddleware, TournamentController.updateTournament);
 
 // DELETE /api/tournaments/:id - Delete tournament
-router.delete('/:id', authMiddleware, TournamentController.deleteTournament);
+router.delete("/:id", authMiddleware, TournamentController.deleteTournament);
 
 export default router;

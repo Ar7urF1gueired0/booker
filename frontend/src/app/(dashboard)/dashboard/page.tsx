@@ -132,14 +132,16 @@ export default function DashboardPage() {
 
 
             {/* Imagem do Post */}
-            <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden mb-4 bg-gray-100">
-              <Image
-                src={post.imageUrl}
-                alt="Post content"
-                fill
-                className="object-cover"
-              />
-            </div>
+            {post.imageUrl && (
+              <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden mb-4 bg-gray-100">
+                <Image
+                  src={post.imageUrl}
+                  alt="Post content"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
 
             {/* Ações (Curtir/Comentar - Opcional) */}
             <div className="flex gap-4">

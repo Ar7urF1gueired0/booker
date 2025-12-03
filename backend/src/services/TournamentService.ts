@@ -68,24 +68,11 @@ export class TournamentService {
   }
 
   static async getTournaments(filters: TournamentFilters = {}) {
-    const { status, from, to } = filters;
-    const where: Record<string, unknown> = {};
-
-    if (status) {
-      where.status = status;
-    }
-
-    if (from || to) {
-      where.startDate = {
-        ...(from ? { gte: from } : {}),
-        ...(to ? { lte: to } : {}),
-      };
-    }
+    
 
     return prisma.tournament.findMany({
-      where,
       orderBy: { startDate: 'asc' },
-      include: baseInclude,
+      include: { ...baseInclude },
     });
   }
 
@@ -132,6 +119,19 @@ export class TournamentService {
   static async deleteTournament(id: number) {
     return prisma.tournament.delete({
       where: { id },
+    });
+  }
+  static async getMyTournaments(userId: number) {
+    return prisma.tournament.findMany({
+      where: { registrations: { some: { userId } } },
+      include: {
+        ...baseInclude,
+        registrations: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
   }
 }
