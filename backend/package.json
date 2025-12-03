@@ -2,7 +2,6 @@
   "name": "beach-tennis-backend",
   "version": "1.0.0",
   "description": "Beach Tennis Championship Backend API",
-  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon --watch src --exec \"node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts\"",
