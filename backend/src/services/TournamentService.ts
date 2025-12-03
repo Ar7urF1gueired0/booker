@@ -70,7 +70,14 @@ export class TournamentService {
   static async getTournaments(filters: TournamentFilters = {}) {
     return prisma.tournament.findMany({
       orderBy: { startDate: "asc" },
-      include: { ...baseInclude, registrations: { include: { user: true } } },
+      include: {
+        ...baseInclude,
+        registrations: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
   }
 

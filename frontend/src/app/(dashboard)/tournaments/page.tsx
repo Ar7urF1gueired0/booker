@@ -162,6 +162,7 @@ export default function TournamentsPage() {
     return parsed.getTime() >= now.getTime();
   };
 
+<<<<<<< HEAD
   const isUserRegistered = (tournament: ApiTournament): boolean => {
     if (!user) return false;
     const tournamentWithRegistrations = tournament as MyTournament;
@@ -171,6 +172,8 @@ export default function TournamentsPage() {
     );
   };
 
+=======
+>>>>>>> 29d52e1a7c809c35ddf749b2a4fa3ee66ff5f38f
   const formatDate = (date: string) => {
     const parsed = new Date(date);
     if (Number.isNaN(parsed.getTime())) return 'Data indisponível';
@@ -634,6 +637,7 @@ export default function TournamentsPage() {
 
               {/* Direita */}
               <button
+<<<<<<< HEAD
                 onClick={() =>
                   isRegistrationOpen(t.registrationDeadline) &&
                   !isUserRegistered(t) &&
@@ -653,6 +657,17 @@ export default function TournamentsPage() {
                   : isRegistrationOpen(t.registrationDeadline)
                     ? 'Inscreva-se'
                     : 'Encerrado'}
+=======
+                onClick={() => isRegistrationOpen(t.registrationDeadline) && openSubscribeModal(t)}
+                disabled={!isRegistrationOpen(t.registrationDeadline)}
+                className={`w-full md:w-auto px-8 py-2 font-bold rounded-full transition ${
+                  isRegistrationOpen(t.registrationDeadline)
+                    ? 'bg-cyan-500 hover:bg-cyan-600 text-white shadow-lg shadow-cyan-200 cursor-pointer'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                {isRegistrationOpen(t.registrationDeadline) ? 'Inscreva-se' : 'Encerrado'}
+>>>>>>> 29d52e1a7c809c35ddf749b2a4fa3ee66ff5f38f
               </button>
             </div>
           ))}
