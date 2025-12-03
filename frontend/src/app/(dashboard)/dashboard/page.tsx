@@ -1,14 +1,45 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { Image as ImageIcon, MapPin, MoreHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { formatDate, formatDateTime } from '@/util/dateFormatter';
+import { Image as ImageIcon, MapPin, MoreHorizontal, ChevronLeft, ChevronRight, X, Plus } from 'lucide-react';
 import Image from 'next/image';
+import React, { useEffect } from 'react';
 
 export default function DashboardPage() {
   const { user } = useAuth();
 
+  const [posts, setPosts] = React.useState<Array<{
+    id: number;
+    user: {
+      id: number;
+      fullName: string;
+      photoUrl: string;
+    };
+    createdAt: string;
+    contentText: string;
+    imageUrl: string;
+  }>>([]);
+
+  const getPosts = async () => {
+    try {
+      const { data } = await apiClient.getPosts();
+      console.log('Posts fetched:', data);
+      setPosts(data);
+    } catch (error) {
+      console.error('Erro ao buscar posts:', error);
+    }
+  };
+
+  useEffect(() => {
+
+    getPosts()
+
+  }, []);
+
   // --- MOCKS DE DADOS ---
-  const posts = [
+  const postsMock = [
     {
       id: 1,
       author: "Amanda Silva",
@@ -19,7 +50,7 @@ export default function DashboardPage() {
     }
   ];
 
-  const friends = [
+  const friendsMock = [
     { id: 1, name: "Fernando Paiva", avatar: "https://i.pravatar.cc/150?u=fernando" },
     { id: 2, name: "Julia Oliveira", avatar: "https://i.pravatar.cc/150?u=julia" },
     { id: 3, name: "Carla Rodrigues", avatar: "https://i.pravatar.cc/150?u=carla" },
@@ -35,32 +66,25 @@ export default function DashboardPage() {
       <div className="lg:col-span-2 space-y-6">
         
         {/* 1. Criar Publicação */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-          <h2 className="font-bold text-gray-700 mb-4">Criar Publicação</h2>
-          
-          <div className="border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50 h-32 flex flex-col items-center justify-center text-gray-400 gap-2 cursor-pointer hover:bg-gray-100 transition">
-             <div className="bg-white p-2 rounded-full shadow-sm">
-                <ImageIcon size={24} className="text-gray-600" />
-             </div>
-             <span className="text-sm font-medium">Arraste as fotos aqui</span>
-             <button className="text-xs text-cyan-500 font-bold border border-cyan-200 px-3 py-1 rounded-full bg-white">
-               Selecionar do Computador
-             </button>
-          </div>
+        <div className="bg-blue-100 p-6 rounded-3xl shadow-sm border border-gray-100">
+          <button className="w-full justify-center flex items-center gap-4 border-gray-300 rounded-2xl hover:border-gray-400 transition">
+            <h2 className="font-bold text-gray-700">Criar Publicação</h2>
+            <Plus size={20} className="text-gray-700 ml-auto" />
+          </button>
         </div>
 
         {/* 2. Lista de Posts */}
-        {posts.map(post => (
+        {posts?.map(post => (
           <div key={post.id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
             {/* Cabeçalho do Post */}
             <div className="flex items-center justify-between mb-4">
                <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full overflow-hidden">
-                    <Image src={post.avatar} alt={post.author} width={40} height={40} />
+                    <Image src={post.user.photoUrl} alt={post.user.fullName} width={40} height={40} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-800 text-sm">{post.author}</h3>
-                    <p className="text-xs text-gray-400">{post.time}</p>
+                    <h3 className="font-bold text-gray-800 text-sm">{post.user.fullName}</h3>
+                    <p className="text-xs text-gray-400">{formatDateTime(post.createdAt)}</p>
                   </div>
                </div>
                <button className="text-gray-400 hover:text-gray-600">
@@ -68,10 +92,14 @@ export default function DashboardPage() {
                </button>
             </div>
 
+            {/* Texto do Post */}
+            <p className="text-gray-700 text-sm mb-4">{post.contentText}</p>
+
+
             {/* Imagem do Post */}
             <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden mb-4 bg-gray-100">
               <Image 
-                src={post.image} 
+                src={post.imageUrl} 
                 alt="Post content" 
                 fill 
                 className="object-cover"
@@ -161,7 +189,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 3. Widget de Amigos */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+        {/* <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
            <h3 className="font-bold text-gray-700 text-sm mb-4">Amigos</h3>
            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
               {friends.map(friend => (
@@ -175,7 +203,7 @@ export default function DashboardPage() {
                  </div>
               ))}
            </div>
-        </div>
+        </div> */}
 
       </div>
     </div>

@@ -64,6 +64,13 @@
       "description": "Verificação de saúde da API"
     },
     {
+      "_id": "grp_posts",
+      "_type": "request_group",
+      "parentId": "wrk_beach_backend",
+      "name": "Posts",
+      "description": "Publicações da timeline"
+    },
+    {
       "_id": "req_auth_register",
       "_type": "request",
       "parentId": "grp_auth",
@@ -83,6 +90,22 @@
       ],
       "authentication": {},
       "metaSortKey": -1,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_posts_list",
+      "_type": "request",
+      "parentId": "grp_posts",
+      "name": "List posts",
+      "description": "Lista publicações com autor e imagem.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/posts",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -0.5,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,

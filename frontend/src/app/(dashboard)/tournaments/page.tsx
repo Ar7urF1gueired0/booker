@@ -1,18 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Calendar, MapPin, Filter, Trophy, Star, Clock, Plus, ChevronDown, CalendarCheck } from 'lucide-react'; // Adicionei CalendarCheck
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 
+type ApiTournament = {
+  id: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+  registrationDeadline: string | null;
+  categoryFilter: string | null;
+  status: string;
+  arena: {
+    id: number;
+    name: string;
+    address: string;
+    city: string;
+    contactPhone: string;
+  };
+  _count?: {
+    registrations?: number;
+    matches?: number;
+  };
+};
+
 export default function TournamentsPage() {
   const [activeTab, setActiveTab] = useState<'MEUS' | 'ENCONTRE'>('MEUS');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [findTournaments, setFindTournaments] = useState<ApiTournament[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   
   const { user } = useAuth();
   const router = useRouter();
 
-  // --- MOCK DADOS ---
   const myTournaments = [
     {
       id: 1,
@@ -43,38 +66,62 @@ export default function TournamentsPage() {
     }
   ];
 
-  const findTournaments = [
-    {
-      id: 101,
-      nome: 'Rota 101',
-      clube: 'Club Guaragua',
-      cidade: 'Guaragua - SP',
-      categorias: '10 categorias',
-      inscricoesAbertas: 3,
-      prazo: '5 dias',
-      imagem: '🏖️'
-    },
-    {
-      id: 102,
-      nome: 'Torneio BeachTenis',
-      clube: 'Santos Club',
-      cidade: 'Santos - SP',
-      categorias: '10 categorias',
-      inscricoesAbertas: 3,
-      prazo: '5 dias',
-      imagem: '🎾'
-    },
-    {
-      id: 103,
-      nome: 'Ranking Bola Boa 2024',
-      clube: 'Academia Uniclo',
-      cidade: 'SJC - SP',
-      categorias: '10 categorias',
-      inscricoesAbertas: 3,
-      prazo: '5 dias',
-      imagem: '🏆'
-    }
-  ];
+  const registrationDeadlineLabel = (deadline: string | null) => {
+    if (!deadline) return 'Prazo não informado';
+
+    const parsed = new Date(deadline);
+    const now = new Date();
+    const diffDays = Math.ceil((parsed.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (Number.isNaN(diffDays)) return 'Prazo não informado';
+    if (diffDays < 0) return 'Inscrições encerradas';
+    if (diffDays === 0) return 'Último dia';
+    return `${diffDays} dias para encerrar`;
+  };
+
+  const formatDate = (date: string) => {
+    const parsed = new Date(date);
+    if (Number.isNaN(parsed.getTime())) return 'Data indisponível';
+    return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit' }).format(parsed);
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchTournaments = async () => {
+      try {
+        setIsLoading(true);
+        setFetchError(null);
+
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3002';
+        const params = new URLSearchParams({
+          status: 'OPEN',
+          from: '2025-01-01',
+          to: '2025-12-31',
+        });
+
+        const response = await fetch(`${baseUrl}/api/tournaments?${params.toString()}`, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error('Falha ao carregar torneios');
+        }
+
+        const { data = [] } = (await response.json()) as { data?: ApiTournament[] };
+        setFindTournaments(Array.isArray(data) ? data : []);
+      } catch (error) {
+        if ((error as Error).name === 'AbortError') return;
+        setFetchError('Não foi possível carregar os torneios. Tente novamente mais tarde.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTournaments();
+
+    return () => controller.abort();
+  }, []);
 
   // --- HANDLERS ---
   const handleInscricao = (torneioNome: string) => {
@@ -246,18 +293,36 @@ export default function TournamentsPage() {
       {/* ABA: ENCONTRE TORNEIOS (Mantém igual) */}
       {activeTab === 'ENCONTRE' && (
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+           {fetchError && (
+             <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+               {fetchError}
+             </div>
+           )}
+
+           {isLoading && (
+             <div className="text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-lg px-3 py-2">
+               Carregando torneios...
+             </div>
+           )}
+
+           {!isLoading && !fetchError && findTournaments.length === 0 && (
+             <div className="text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-lg px-3 py-4 text-center">
+               Nenhum torneio disponível no período informado.
+             </div>
+           )}
+
            {findTournaments.map((t) => (
              <div key={t.id} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 hover:border-cyan-100 transition">
                
                {/* Esquerda */}
                <div className="flex items-center gap-4 w-full md:w-auto">
                  <div className="w-16 h-16 bg-cyan-50 rounded-full flex items-center justify-center text-3xl shrink-0">
-                   {t.imagem}
+                   🎾
                  </div>
                  <div>
-                   <h3 className="font-bold text-gray-800 text-lg">{t.nome}</h3>
+                   <h3 className="font-bold text-gray-800 text-lg">{t.name}</h3>
                    <p className="text-xs text-gray-500 flex items-center gap-1">
-                      <MapPin size={12} /> {t.clube} • {t.cidade}
+                      <MapPin size={12} /> {t.arena?.name ?? 'Arena não informada'} • {t.arena?.city ?? 'Cidade não informada'}
                    </p>
                  </div>
                </div>
@@ -269,16 +334,35 @@ export default function TournamentsPage() {
                         <Trophy size={20} />
                      </div>
                      <div>
-                        <p className="font-bold text-gray-800">{t.categorias}</p>
-                        <span className="text-xs text-gray-400">{t.inscricoesAbertas} inscrições abertas</span>
+                        <p className="font-bold text-gray-800">{t._count?.registrations ?? 0} inscrições</p>
+                        <span className="text-xs text-gray-400">{t._count?.matches ?? 0} partidas previstas</span>
+                     </div>
+                   </div>
+                  <div className="flex items-center gap-3">
+                     <div className="bg-cyan-100 p-2 rounded-full text-cyan-600 shrink-0">
+                        <Calendar size={20} />
+                     </div>
+                     <div>
+                        <p className="font-bold text-gray-800">
+                          {formatDate(t.startDate)} - {formatDate(t.endDate)}
+                        </p>
+                        <span className="text-xs text-gray-400">Período do torneio</span>
                      </div>
                   </div>
-                  {/* ... Resto das infos ... */}
+                  <div className="flex items-center gap-3">
+                     <div className="bg-cyan-100 p-2 rounded-full text-cyan-600 shrink-0">
+                        <Clock size={20} />
+                     </div>
+                     <div>
+                        <p className="font-bold text-gray-800">{registrationDeadlineLabel(t.registrationDeadline)}</p>
+                        <span className="text-xs text-gray-400">Limite de inscrição</span>
+                     </div>
+                  </div>
                </div>
    
                {/* Direita */}
                <button 
-                 onClick={() => handleInscricao(t.nome)}
+                 onClick={() => handleInscricao(t.name)}
                  className="w-full md:w-auto px-8 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-bold rounded-full transition shadow-lg shadow-cyan-200"
                >
                  Inscreva-se

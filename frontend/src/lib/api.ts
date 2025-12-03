@@ -1,5 +1,11 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
+let authToken: string | null = null;
+
+export const setApiAuthToken = (token: string | null) => {
+  authToken = token;
+};
+
 export const apiClient = {
   async request(endpoint: string, options: RequestInit = {}) {
     const url = `${API_URL}${endpoint}`;
@@ -9,9 +15,10 @@ export const apiClient = {
     };
 
     // Adicionar token se existir
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    const tokenFromStorage =
+      authToken ?? (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
+    if (tokenFromStorage) {
+      headers['Authorization'] = `Bearer ${tokenFromStorage}`;
     }
 
     const response = await fetch(url, {
@@ -59,4 +66,8 @@ export const apiClient = {
   async getTournamentRegistrations(tournamentId: number) {
     return this.request(`/registrations/${tournamentId}`);
   },
+
+  async getPosts() {
+    return this.request('/posts');
+  }
 };
