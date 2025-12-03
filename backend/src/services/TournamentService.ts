@@ -1,4 +1,4 @@
-import { PrismaClient, Status } from '@prisma/client';
+import { PrismaClient, Status } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -49,7 +49,7 @@ const baseInclude = {
 export class TournamentService {
   static async createTournament(data: CreateTournamentInput) {
     if (!data.name || !data.arenaId || !data.startDate) {
-      throw new Error('Missing required fields');
+      throw new Error("Missing required fields");
     }
 
     return prisma.tournament.create({
@@ -68,11 +68,9 @@ export class TournamentService {
   }
 
   static async getTournaments(filters: TournamentFilters = {}) {
-    
-
     return prisma.tournament.findMany({
-      orderBy: { startDate: 'asc' },
-      include: { ...baseInclude },
+      orderBy: { startDate: "asc" },
+      include: { ...baseInclude, registrations: { include: { user: true } } },
     });
   }
 
@@ -102,7 +100,7 @@ export class TournamentService {
           },
         },
         matches: {
-          orderBy: { matchDate: 'asc' },
+          orderBy: { matchDate: "asc" },
         },
       },
     });

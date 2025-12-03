@@ -5,11 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
@@ -28,11 +24,9 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-gray-50">
       {/* O Header aparece aqui automaticamente para todas as rotas dentro de (dashboard) */}
       <Header />
-      
+
       {/* pt-20 adiciona o espaçamento para compensar o Header fixed */}
-      <main className="mx-auto max-w-7xl px-4 py-8 pt-24">
-        {children}
-      </main>
+      <main className="mx-auto max-w-7xl px-4 py-8 pt-24">{children}</main>
     </div>
   );
 }

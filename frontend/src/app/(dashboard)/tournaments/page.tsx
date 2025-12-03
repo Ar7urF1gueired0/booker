@@ -37,9 +37,6 @@ type ApiTournament = {
     registrations?: number;
     matches?: number;
   };
-};
-
-type MyTournament = ApiTournament & {
   registrations?: Array<{
     id: number;
     registrationDate: string;
@@ -49,6 +46,8 @@ type MyTournament = ApiTournament & {
     };
   }>;
 };
+
+type MyTournament = ApiTournament;
 
 type Arena = {
   id: number;
@@ -161,6 +160,15 @@ export default function TournamentsPage() {
     const parsed = new Date(deadline);
     const now = new Date();
     return parsed.getTime() >= now.getTime();
+  };
+
+  const isUserRegistered = (tournament: ApiTournament): boolean => {
+    if (!user) return false;
+    const tournamentWithRegistrations = tournament as MyTournament;
+    if (!tournamentWithRegistrations.registrations) return false;
+    return tournamentWithRegistrations.registrations.some(
+      registration => registration.user?.id === user.id
+    );
   };
 
   const formatDate = (date: string) => {
@@ -626,15 +634,25 @@ export default function TournamentsPage() {
 
               {/* Direita */}
               <button
-                onClick={() => isRegistrationOpen(t.registrationDeadline) && openSubscribeModal(t)}
-                disabled={!isRegistrationOpen(t.registrationDeadline)}
+                onClick={() =>
+                  isRegistrationOpen(t.registrationDeadline) &&
+                  !isUserRegistered(t) &&
+                  openSubscribeModal(t)
+                }
+                disabled={!isRegistrationOpen(t.registrationDeadline) || isUserRegistered(t)}
                 className={`w-full md:w-auto px-8 py-2 font-bold rounded-full transition ${
-                  isRegistrationOpen(t.registrationDeadline)
-                    ? 'bg-cyan-500 hover:bg-cyan-600 text-white shadow-lg shadow-cyan-200 cursor-pointer'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  isUserRegistered(t)
+                    ? 'bg-green-100 text-green-600 cursor-default'
+                    : isRegistrationOpen(t.registrationDeadline)
+                      ? 'bg-cyan-500 hover:bg-cyan-600 text-white shadow-lg shadow-cyan-200 cursor-pointer'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
-                {isRegistrationOpen(t.registrationDeadline) ? 'Inscreva-se' : 'Encerrado'}
+                {isUserRegistered(t)
+                  ? '✓ Inscrito'
+                  : isRegistrationOpen(t.registrationDeadline)
+                    ? 'Inscreva-se'
+                    : 'Encerrado'}
               </button>
             </div>
           ))}

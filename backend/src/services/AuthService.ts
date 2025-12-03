@@ -24,6 +24,7 @@ interface AuthResponse {
     email: string;
     fullName: string;
     role: string;
+    photoUrl?: string;
   };
   token: string;
 }
@@ -78,6 +79,14 @@ export class AuthService {
     // Buscar usuário por email
     const user = await prisma.user.findUnique({
       where: { email: data.email },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        photoUrl: true,
+        passwordHash: true,
+      },
     });
 
     if (!user) {
@@ -104,6 +113,7 @@ export class AuthService {
         email: user.email,
         fullName: user.fullName,
         role: user.role,
+        photoUrl: user.photoUrl ?? undefined,
       },
       token,
     };

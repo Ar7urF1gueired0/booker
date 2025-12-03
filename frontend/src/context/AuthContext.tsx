@@ -74,6 +74,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  console.log('user', user);
+
   useEffect(() => {
     const storedSession = readStoredSession();
     if (storedSession) {
@@ -110,13 +112,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         router.push('/dashboard');
         return result;
       } catch (error) {
-        
         throw error;
       } finally {
         setIsLoading(false);
       }
     },
-    [applySession, router],
+    [applySession, router]
   );
 
   const register = useCallback(
@@ -133,7 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(false);
       }
     },
-    [applySession, router],
+    [applySession, router]
   );
 
   const logout = useCallback(() => {

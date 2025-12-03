@@ -86,12 +86,8 @@ export default function RegisterPage() {
             </svg>
           </div>
 
-          <h2 className="mt-8 text-2xl font-bold text-gray-800 text-center">
-            🎾 Beach Tennis
-          </h2>
-          <p className="mt-2 text-gray-600 text-center">
-            Championship Scheduling System
-          </p>
+          <h2 className="mt-8 text-2xl font-bold text-gray-800 text-center">🎾 Beach Tennis</h2>
+          <p className="mt-2 text-gray-600 text-center">Championship Scheduling System</p>
 
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">Já tem uma conta?</p>
@@ -122,7 +118,7 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Digite seu nome"
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  onChange={e => setFullName(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />
@@ -134,7 +130,7 @@ export default function RegisterPage() {
                   type="email"
                   placeholder="Informe seu e-mail"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />
@@ -146,7 +142,7 @@ export default function RegisterPage() {
                   type="password"
                   placeholder="Crie uma senha"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />
@@ -158,7 +154,7 @@ export default function RegisterPage() {
                   type="password"
                   placeholder="Confirme sua senha"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={e => setConfirmPassword(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />

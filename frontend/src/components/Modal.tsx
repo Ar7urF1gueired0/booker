@@ -32,6 +32,9 @@ type ModalProps = {
   onSubmit?: (values: Record<string, string>) => void;
   onClose?: () => void;
   children?: React.ReactNode; // Conteúdo customizado opcional (formulário externo ou qualquer JSX)
+  onValuesChange?: (values: Record<string, string>) => void;
+  renderFieldSlot?: (field: ModalFormField, value: string) => React.ReactNode;
+  isSubmitDisabled?: boolean;
 };
 
 export function Modal({
@@ -43,6 +46,9 @@ export function Modal({
   onSubmit,
   onClose,
   children,
+  onValuesChange,
+  renderFieldSlot,
+  isSubmitDisabled = false,
 }: ModalProps) {
   const initialValues = useMemo(() => {
     if (!formSchema) return {};
@@ -56,12 +62,21 @@ export function Modal({
 
   useEffect(() => {
     setValues(initialValues);
-  }, [initialValues, isOpen]);
+    if (onValuesChange) {
+      onValuesChange(initialValues);
+    }
+  }, [initialValues, isOpen, onValuesChange]);
 
   if (!isOpen) return null;
 
   const handleChange = (name: string, value: string) => {
-    setValues(prev => ({ ...prev, [name]: value }));
+    setValues(prev => {
+      const nextValues = { ...prev, [name]: value };
+      if (onValuesChange) {
+        onValuesChange(nextValues);
+      }
+      return nextValues;
+    });
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -161,6 +176,7 @@ export function Modal({
                   {field.description && (
                     <p className="text-xs text-gray-500">{field.description}</p>
                   )}
+                  {renderFieldSlot && renderFieldSlot(field, values[field.name] ?? '')}
                 </div>
               ))}
             </form>
@@ -182,7 +198,12 @@ export function Modal({
             <button
               type="submit"
               form="modal-form"
-              className="rounded-full bg-cyan-500 px-5 py-2 text-xs sm:text-sm font-bold text-white transition hover:bg-cyan-600"
+              disabled={isSubmitDisabled}
+              className={`rounded-full px-5 py-2 text-xs sm:text-sm font-bold text-white transition ${
+                isSubmitDisabled
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-cyan-500 hover:bg-cyan-600'
+              }`}
             >
               {formSchema.submitLabel ?? 'Salvar'}
             </button>

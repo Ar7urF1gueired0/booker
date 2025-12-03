@@ -20,21 +20,18 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 border-b border-gray-100 bg-white/90 backdrop-blur-md z-50 h-20 flex items-center">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6">
-        
         {/* 1. Logo GoToPlay */}
-        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
+        <Link href={user ? '/dashboard' : '/'} className="flex items-center gap-2 group">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-50 text-xl shadow-inner transition group-hover:scale-110">
             🎾
           </div>
-          <span className="text-xl font-bold tracking-tight text-gray-800">
-            GoToPlay
-          </span>
+          <span className="text-xl font-bold tracking-tight text-gray-800">GoToPlay</span>
         </Link>
 
         {/* 2. Navegação Central (Só aparece se tiver user logado ou se quisermos mostrar sempre) */}
         {user && (
           <nav className="hidden gap-2 md:flex bg-gray-100/50 p-1.5 rounded-full">
-            {navItems.map((item) => {
+            {navItems.map(item => {
               const isActive = pathname === item.href;
               return (
                 <Link
@@ -42,9 +39,10 @@ export default function Header() {
                   href={item.href}
                   className={`
                     flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold transition-all
-                    ${isActive 
-                      ? 'bg-white text-green-600 shadow-sm' 
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
+                    ${
+                      isActive
+                        ? 'bg-white text-green-600 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
                     }
                   `}
                 >
@@ -62,9 +60,7 @@ export default function Header() {
             <>
               {/* Info do Usuário (Escondido no mobile para economizar espaço) */}
               <div className="hidden text-right md:block">
-                <p className="text-sm font-bold text-gray-800 leading-tight">
-                  {user.fullName}
-                </p>
+                <p className="text-sm font-bold text-gray-800 leading-tight">{user.fullName}</p>
                 <p className="text-xs text-gray-400 font-medium">
                   {user.role === 'ADMIN' ? 'Administrador' : 'Atleta'}
                 </p>
