@@ -228,7 +228,7 @@ export default function TournamentsPage() {
         setIsLoading(true);
         setFetchError(null);
 
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3002';
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://booker-7lj9.onrender.com/api';
         const params = new URLSearchParams({
           status: 'OPEN',
           from: '2025-01-01',
