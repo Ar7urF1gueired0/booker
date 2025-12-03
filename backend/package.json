@@ -4,10 +4,10 @@
   "description": "Beach Tennis Championship Backend API",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon --watch src --exec \"node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts\"",
-    "build": "npm run prisma:generate && npm run prisma:migrate",
-    "start": "tsx src/index.ts",
-    "start:prod": "node --import tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "build": "npm run prisma:generate && tsc",
+    "start": "node dist/index.js",
+    "start:prod": "node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
@@ -31,7 +31,7 @@
     "jsonwebtoken": "^9.0.2",
     "prisma": "5.21.0",
     "zod": "^3.22.4",
-    "typescript": "^5.9.3"    
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",

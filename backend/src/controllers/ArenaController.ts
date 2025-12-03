@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { ArenaService } from "../services/ArenaService.ts";
+import { ArenaService } from "../services/ArenaService.js";
 
 export class ArenaController {
   static async getArenas(req: Request, res: Response) {

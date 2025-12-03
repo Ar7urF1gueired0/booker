@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ArenaController } from "../controllers/ArenaController.ts";
+import { ArenaController } from "../controllers/ArenaController.js";
 
 const router = Router();
 
