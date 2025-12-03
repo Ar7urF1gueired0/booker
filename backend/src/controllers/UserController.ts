@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { Role } from '@prisma/client';
-import { UserService } from '../services/UserService.ts';
+import { UserService } from '../services/UserService';
 
 export class UserController {
   static async getUsers(req: Request, res: Response) {

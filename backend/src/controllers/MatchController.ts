@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { Status } from '@prisma/client';
-import { MatchService } from '../services/MatchService.ts';
+import { MatchService } from '../services/MatchService';
 
 const parseDate = (value?: string) => {
   if (!value) return undefined;

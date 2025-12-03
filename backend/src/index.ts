@@ -1,13 +1,13 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import authRoutes from "./routes/auth.ts";
-import tournamentRoutes from "./routes/tournaments.ts";
-import tournamentRegistrationRoutes from "./routes/tournament-registrations.ts";
-import matchRoutes from "./routes/matches.ts";
-import userRoutes from "./routes/users.ts";
-import postRoutes from "./routes/posts.ts";
-import arenaRoutes from "./routes/arenas.ts";
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRoutes from './routes/auth';
+import tournamentRoutes from './routes/tournaments';
+import tournamentRegistrationRoutes from './routes/tournament-registrations';
+import matchRoutes from './routes/matches';
+import userRoutes from './routes/users';
+import postRoutes from './routes/posts';
+import arenaRoutes from './routes/arenas';
 
 dotenv.config();
 

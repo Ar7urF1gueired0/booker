@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { PostService } from '../services/PostService.ts';
+import { PostService } from '../services/PostService';
 
 interface CreatePostRequest extends Request {
     userId?: number;

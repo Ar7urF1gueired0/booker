@@ -1,11 +1,8 @@
-import type { Request, Response } from "express";
-import { Status } from "@prisma/client";
-import { TournamentService } from "../services/TournamentService.ts";
-import type {
-  TournamentFilters,
-  UpdateTournamentInput,
-} from "../services/TournamentService.ts";
-import type { AuthRequest } from "../middleware/authMiddleware.ts";
+import type { Request, Response } from 'express';
+import { Status } from '@prisma/client';
+import { TournamentService } from '../services/TournamentService';
+import type { TournamentFilters, UpdateTournamentInput } from '../services/TournamentService';
+import type { AuthRequest } from '../middleware/authMiddleware';
 
 const parseDate = (value?: string) => {
   if (!value) return undefined;
