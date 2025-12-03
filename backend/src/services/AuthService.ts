@@ -1,7 +1,7 @@
-import bcrypt from 'bcryptjs';
+// @ ts-nocheck
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
-import process from 'process';
 
 const prisma = new PrismaClient();
 
