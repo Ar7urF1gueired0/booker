@@ -1,6 +1,6 @@
-import { Router } from "express";
-import { TournamentController } from "../controllers/TournamentController.ts";
-import { authMiddleware } from "../middleware/authMiddleware.ts";
+import { Router } from 'express';
+import { TournamentController } from '../controllers/TournamentController';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 
