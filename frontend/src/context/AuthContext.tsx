@@ -112,7 +112,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         router.push('/dashboard');
         return result;
       } catch (error) {
-        
         throw error;
       } finally {
         setIsLoading(false);

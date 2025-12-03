@@ -1,6 +1,6 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -30,7 +30,8 @@ interface AuthResponse {
 }
 
 export class AuthService {
-  private jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+  private jwtSecret =
+    process.env.JWT_SECRET || "your-secret-key-change-in-production";
 
   async register(data: RegisterData): Promise<AuthResponse> {
     // Verificar se usuário já existe
@@ -39,7 +40,7 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new Error('Email already registered');
+      throw new Error("Email already registered");
     }
 
     // Hash da senha
@@ -61,7 +62,7 @@ export class AuthService {
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       this.jwtSecret,
-      { expiresIn: '7d' }
+      { expiresIn: "7d" }
     );
 
     return {
@@ -90,21 +91,24 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     }
 
     // Verificar senha
-    const passwordMatch = await bcrypt.compare(data.password, user.passwordHash);
+    const passwordMatch = await bcrypt.compare(
+      data.password,
+      user.passwordHash
+    );
 
     if (!passwordMatch) {
-      throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     }
 
     // Gerar JWT
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       this.jwtSecret,
-      { expiresIn: '7d' }
+      { expiresIn: "7d" }
     );
 
     return {
@@ -124,7 +128,7 @@ export class AuthService {
       const decoded = jwt.verify(token, this.jwtSecret);
       return decoded;
     } catch (error) {
-      throw new Error('Invalid token');
+      throw new Error("Invalid token");
     }
   }
 }

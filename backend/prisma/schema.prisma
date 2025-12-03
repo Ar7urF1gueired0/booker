@@ -68,12 +68,12 @@ model User {
   level    Level        @default(C)
 
   // Relacionamentos
-  posts             Post[]
-  registrations     TournamentRegistration[] // Jogador principal
-  partnerRegs       TournamentRegistration[] @relation("PartnerRelation") // Como parceiro
+  posts               Post[]
+  registrations       TournamentRegistration[] // Jogador principal
+  partnerRegs         TournamentRegistration[] @relation("PartnerRelation") // Como parceiro
   matchParticipations MatchParticipant[]
-  achievements      UserAchievement[]
-  
+  achievements        UserAchievement[]
+
   // Admin: Torneios que este usuário criou
   createdTournaments Tournament[] @relation("AdminCreated")
 
@@ -102,10 +102,10 @@ model Tournament {
   registrationDeadline DateTime?
   categoryFilter       String?
   status               Status    @default(OPEN)
-  
+
   // Auditoria (Quem criou)
-  createdById          Int?
-  createdBy            User?     @relation("AdminCreated", fields: [createdById], references: [id])
+  createdById Int?
+  createdBy   User? @relation("AdminCreated", fields: [createdById], references: [id])
 
   arena         Arena                    @relation(fields: [arenaId], references: [id])
   registrations TournamentRegistration[]
@@ -115,10 +115,10 @@ model Tournament {
 }
 
 model TournamentRegistration {
-  id             Int      @id @default(autoincrement())
-  tournamentId   Int
-  userId         Int
-  partnerId      Int?
+  id               Int      @id @default(autoincrement())
+  tournamentId     Int
+  userId           Int
+  partnerId        Int?
   registrationDate DateTime @default(now())
 
   tournament Tournament @relation(fields: [tournamentId], references: [id])
