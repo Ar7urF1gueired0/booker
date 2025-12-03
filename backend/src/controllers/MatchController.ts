@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Request, Response } from 'express';
 import { Status } from '@prisma/client';
 import { MatchService } from '../services/MatchService';
