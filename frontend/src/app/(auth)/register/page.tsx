@@ -74,46 +74,11 @@ export default function RegisterPage() {
         {/* Lado esquerdo - Ilustração */}
         <div className="hidden lg:flex flex-col items-center justify-center">
           <div className="relative w-full max-w-md">
-            <svg
+            <img
+              src="/public/tenista.png"
+              alt="Beach Tennis Illustration"
               className="w-full h-auto"
-              viewBox="0 0 400 500"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {/* Ilustração de jogador */}
-              <circle cx="200" cy="100" r="40" fill="#E8A87C" />
-              <path
-                d="M 200 140 L 200 220"
-                stroke="#F97316"
-                strokeWidth="20"
-                strokeLinecap="round"
-              />
-              <path
-                d="M 200 160 L 140 120"
-                stroke="#FCA5A5"
-                strokeWidth="18"
-                strokeLinecap="round"
-              />
-              <path
-                d="M 200 160 L 260 120"
-                stroke="#FCA5A5"
-                strokeWidth="18"
-                strokeLinecap="round"
-              />
-              <path
-                d="M 200 220 L 160 300"
-                stroke="#10B981"
-                strokeWidth="18"
-                strokeLinecap="round"
-              />
-              <path
-                d="M 200 220 L 240 300"
-                stroke="#10B981"
-                strokeWidth="18"
-                strokeLinecap="round"
-              />
-              <circle cx="140" cy="100" r="35" fill="none" stroke="#F59E0B" strokeWidth="8" />
-            </svg>
+            />
           </div>
 
           <h2 className="mt-8 text-2xl font-bold text-gray-800 text-center">🎾 Beach Tennis</h2>
@@ -243,7 +208,7 @@ export default function RegisterPage() {
             <div className="lg:hidden mt-6 text-center">
               <p className="text-gray-600 mb-3">Já tem uma conta?</p>
               <Link
-                href="/login"
+                href="/"
                 className="inline-block px-6 py-2 border-2 border-green-400 text-green-600 rounded-full hover:bg-green-50 transition font-semibold"
               >
                 Faça login
