@@ -69,5 +69,12 @@ export const apiClient = {
 
   async getPosts() {
     return this.request('/posts');
-  }
+  },
+
+  async createPost(postData: { contentText: string; imageUrl: string }) {
+    return this.request('/posts', {
+      method: 'POST',
+      body: JSON.stringify(postData),
+    });
+},
 };

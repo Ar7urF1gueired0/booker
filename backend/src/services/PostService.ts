@@ -17,4 +17,19 @@ export class PostService {
       },
     });
   }
+
+  static async createPost(data: { contentText: string; imageUrl: string, userId: number }) {
+    const { contentText, imageUrl, userId } = data;
+
+    
+    const createdPost = await prisma.post.create({
+      data: {
+        contentText,
+        imageUrl,
+        userId
+      },
+    });
+
+    return createdPost;
+  }
 }
