@@ -17,7 +17,7 @@
       "parentId": "wrk_beach_backend",
       "name": "Base Environment",
       "data": {
-        "base_url": "http://localhost:3002",
+        "base_url": "https://booker-7lj9.onrender.com",
         "jwt_token": ""
       }
     },

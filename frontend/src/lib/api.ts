@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://booker-7lj9.onrender.com/api';
 
 let authToken: string | null = null;
 
