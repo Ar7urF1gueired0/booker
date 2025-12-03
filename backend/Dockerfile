@@ -1,4 +1,4 @@
-FROM postgres:latest
+FROM postgres:16-alpine
 
 # Default database values (override via docker-compose or environment)
 ENV POSTGRES_USER=booker \

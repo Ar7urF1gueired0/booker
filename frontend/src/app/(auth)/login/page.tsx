@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
+import { enqueueSnackbar } from 'notistack';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,7 +20,8 @@ export default function LoginPage() {
     try {
       await login(email, password);
     } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login');
+      console.log(err.message);
+      enqueueSnackbar(err.message, { variant: 'error', autoHideDuration: 3000 });
     } finally {
       setIsLoading(false);
     }
@@ -72,21 +74,12 @@ export default function LoginPage() {
 
               {/* Raquete */}
               <circle cx="140" cy="100" r="35" fill="none" stroke="#F59E0B" strokeWidth="8" />
-              <path
-                d="M 140 100 L 120 80"
-                stroke="#F59E0B"
-                strokeWidth="6"
-                strokeLinecap="round"
-              />
+              <path d="M 140 100 L 120 80" stroke="#F59E0B" strokeWidth="6" strokeLinecap="round" />
             </svg>
           </div>
 
-          <h2 className="mt-8 text-2xl font-bold text-gray-800 text-center">
-            🎾 Beach Tennis
-          </h2>
-          <p className="mt-2 text-gray-600 text-center">
-            Championship Scheduling System
-          </p>
+          <h2 className="mt-8 text-2xl font-bold text-gray-800 text-center">🎾 Beach Tennis</h2>
+          <p className="mt-2 text-gray-600 text-center">Championship Scheduling System</p>
 
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">Não tem uma conta?</p>
@@ -117,7 +110,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="Informe seu e-mail"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />
@@ -129,7 +122,7 @@ export default function LoginPage() {
                   type="password"
                   placeholder="Informe sua senha"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />

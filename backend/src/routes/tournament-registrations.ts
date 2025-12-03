@@ -1,6 +1,6 @@
 import express from 'express';
-import { TournamentRegistrationController } from '../controllers/TournamentRegistrationController.ts';
-import { authMiddleware } from '../middleware/authMiddleware.ts';
+import { TournamentRegistrationController } from '../controllers/TournamentRegistrationController';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
 

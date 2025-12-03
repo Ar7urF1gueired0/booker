@@ -14,16 +14,10 @@ export function LandingHeader() {
 
       {/* Navegação Simplificada */}
       <nav className="hidden md:flex items-center gap-8">
-        <Link 
-          href="/" 
-          className="text-gray-800 font-semibold border-b-2 border-green-400 pb-1"
-        >
+        <Link href="/" className="text-gray-800 font-semibold border-b-2 border-green-400 pb-1">
           Acesso
         </Link>
-        <Link 
-          href="/sobre" 
-          className="text-gray-500 font-medium hover:text-green-600 transition"
-        >
+        <Link href="/sobre" className="text-gray-500 font-medium hover:text-green-600 transition">
           Sobre
         </Link>
         {/* Avaliações e Contato foram removidos conforme solicitado */}

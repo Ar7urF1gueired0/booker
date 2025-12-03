@@ -4,11 +4,16 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 
+type GenderOption = 'MALE' | 'FEMALE' | 'OTHER';
+
 export default function RegisterPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [gender, setGender] = useState<GenderOption | ''>('');
+  const [birthDate, setBirthDate] = useState('');
+  const [locationCity, setLocationCity] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
@@ -27,10 +32,35 @@ export default function RegisterPage() {
       return;
     }
 
+    if (!gender) {
+      setError('Selecione um gênero');
+      return;
+    }
+
+    if (!birthDate) {
+      setError('Informe sua data de nascimento');
+      return;
+    }
+
+    if (!locationCity.trim()) {
+      setError('Informe sua cidade');
+      return;
+    }
+
+    const normalizedGender = gender as GenderOption;
+    const normalizedCity = locationCity.trim();
+
     setIsLoading(true);
 
     try {
-      await register(fullName, email, password);
+      await register({
+        fullName,
+        email,
+        password,
+        gender: normalizedGender,
+        birthDate,
+        locationCity: normalizedCity,
+      });
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer cadastro');
     } finally {
@@ -86,12 +116,8 @@ export default function RegisterPage() {
             </svg>
           </div>
 
-          <h2 className="mt-8 text-2xl font-bold text-gray-800 text-center">
-            🎾 Beach Tennis
-          </h2>
-          <p className="mt-2 text-gray-600 text-center">
-            Championship Scheduling System
-          </p>
+          <h2 className="mt-8 text-2xl font-bold text-gray-800 text-center">🎾 Beach Tennis</h2>
+          <p className="mt-2 text-gray-600 text-center">Championship Scheduling System</p>
 
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">Já tem uma conta?</p>
@@ -122,7 +148,7 @@ export default function RegisterPage() {
                   type="text"
                   placeholder="Digite seu nome"
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  onChange={e => setFullName(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />
@@ -134,7 +160,47 @@ export default function RegisterPage() {
                   type="email"
                   placeholder="Informe seu e-mail"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">Gênero</label>
+                  <select
+                    value={gender}
+                    onChange={e => setGender(e.target.value as GenderOption | '')}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+                  >
+                    <option value="">Selecione</option>
+                    <option value="FEMALE">Feminino</option>
+                    <option value="MALE">Masculino</option>
+                    <option value="OTHER">Outro</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">Data de Nascimento</label>
+                  <input
+                    type="date"
+                    value={birthDate}
+                    onChange={e => setBirthDate(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">Cidade</label>
+                <input
+                  type="text"
+                  placeholder="Informe sua cidade"
+                  value={locationCity}
+                  onChange={e => setLocationCity(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />
@@ -146,7 +212,7 @@ export default function RegisterPage() {
                   type="password"
                   placeholder="Crie uma senha"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />
@@ -158,7 +224,7 @@ export default function RegisterPage() {
                   type="password"
                   placeholder="Confirme sua senha"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={e => setConfirmPassword(e.target.value)}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />

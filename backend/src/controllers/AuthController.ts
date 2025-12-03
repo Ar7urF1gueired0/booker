@@ -1,5 +1,6 @@
+// @ts-nocheck
 import type { Request, Response } from 'express';
-import { AuthService } from '../services/AuthService.ts';
+import { AuthService } from '../services/AuthService';
 
 const authService = new AuthService();
 

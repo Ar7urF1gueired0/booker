@@ -1,0 +1,583 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-12-07T22:30:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2025.1.0",
+  "resources": [
+    {
+      "_id": "wrk_beach_backend",
+      "_type": "workspace",
+      "name": "Beach Tennis Backend",
+      "description": "Coleção Insomnia com todas as rotas expostas pelo backend e exemplos de payloads",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_beach_backend",
+      "_type": "environment",
+      "parentId": "wrk_beach_backend",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3002",
+        "jwt_token": ""
+      }
+    },
+    {
+      "_id": "grp_auth",
+      "_type": "request_group",
+      "parentId": "wrk_beach_backend",
+      "name": "Auth",
+      "description": "Rotas de autenticação para registro e login"
+    },
+    {
+      "_id": "grp_users",
+      "_type": "request_group",
+      "parentId": "wrk_beach_backend",
+      "name": "Users",
+      "description": "CRUD de usuários e buscas por e-mail"
+    },
+    {
+      "_id": "grp_tournaments",
+      "_type": "request_group",
+      "parentId": "wrk_beach_backend",
+      "name": "Tournaments",
+      "description": "Endpoints de gerenciamento de torneios"
+    },
+    {
+      "_id": "grp_matches",
+      "_type": "request_group",
+      "parentId": "wrk_beach_backend",
+      "name": "Matches",
+      "description": "Gerenciamento de partidas"
+    },
+    {
+      "_id": "grp_registrations",
+      "_type": "request_group",
+      "parentId": "wrk_beach_backend",
+      "name": "Registrations",
+      "description": "Inscrições e desinscrições em torneios"
+    },
+    {
+      "_id": "grp_health",
+      "_type": "request_group",
+      "parentId": "wrk_beach_backend",
+      "name": "Health",
+      "description": "Verificação de saúde da API"
+    },
+    {
+      "_id": "grp_posts",
+      "_type": "request_group",
+      "parentId": "wrk_beach_backend",
+      "name": "Posts",
+      "description": "Publicações da timeline"
+    },
+    {
+      "_id": "req_auth_register",
+      "_type": "request",
+      "parentId": "grp_auth",
+      "name": "Register user",
+      "description": "Cria um novo usuário exigindo fullName, email e password.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"fullName\": \"Camila B.\",\n  \"email\": \"camila@example.com\",\n  \"password\": \"secret123\",\n  \"gender\": \"FEMALE\",\n  \"birthDate\": \"1994-04-20\",\n  \"locationCity\": \"São Paulo\"\n}"
+      },
+      "url": "{{ base_url }}/api/auth/register",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_posts_list",
+      "_type": "request",
+      "parentId": "grp_posts",
+      "name": "List posts",
+      "description": "Lista publicações com autor e imagem.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/posts",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -0.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_auth_login",
+      "_type": "request",
+      "parentId": "grp_auth",
+      "name": "Login user",
+      "description": "Autentica o usuário retornando o token JWT.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"camila@example.com\",\n  \"password\": \"secret123\"\n}"
+      },
+      "url": "{{ base_url }}/api/auth/login",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -2,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_users_list",
+      "_type": "request",
+      "parentId": "grp_users",
+      "name": "List users",
+      "description": "Retorna todos os usuários cadastrados.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/users",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -3,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_users_create",
+      "_type": "request",
+      "parentId": "grp_users",
+      "name": "Create user",
+      "description": "Cria usuário com hash manual e papel opcional (default USER).",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"marco@example.com\",\n  \"fullName\": \"Marco S.\",\n  \"password\": \"senhaSegura\",\n  \"role\": \"USER\"\n}"
+      },
+      "url": "{{ base_url }}/api/users",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -4,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_users_get_by_id",
+      "_type": "request",
+      "parentId": "grp_users",
+      "name": "Get user by ID",
+      "description": "Busca usuário por ID válido.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/users/1",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_users_get_by_email",
+      "_type": "request",
+      "parentId": "grp_users",
+      "name": "Get user by email",
+      "description": "Busca usuário usando o e-mail como identificador.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/users/email/camila@example.com",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -6,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_users_update",
+      "_type": "request",
+      "parentId": "grp_users",
+      "name": "Update user",
+      "description": "Atualiza nome, cidade ou papel de um usuário existente.",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"fullName\": \"Camila Barros\",\n  \"locationCity\": \"Rio de Janeiro\",\n  \"role\": \"ADMIN\"\n}"
+      },
+      "url": "{{ base_url }}/api/users/1",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -7,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_users_delete",
+      "_type": "request",
+      "parentId": "grp_users",
+      "name": "Delete user",
+      "description": "Remove usuário pelo ID.",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/users/1",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -8,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_tournaments_list",
+      "_type": "request",
+      "parentId": "grp_tournaments",
+      "name": "List tournaments",
+      "description": "Lista e filtra torneios por status e datas.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/tournaments",
+      "parameters": [
+        {
+          "name": "status",
+          "value": "OPEN",
+          "description": "Status do torneio",
+          "disabled": false
+        },
+        {
+          "name": "from",
+          "value": "2025-01-01",
+          "description": "Data mínima de início",
+          "disabled": false
+        },
+        {
+          "name": "to",
+          "value": "2025-12-31",
+          "description": "Data máxima de início",
+          "disabled": false
+        }
+      ],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -9,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_tournaments_create",
+      "_type": "request",
+      "parentId": "grp_tournaments",
+      "name": "Create tournament",
+      "description": "Cria torneio (somente ADMIN) com datas e status.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Copa Beach 2025\",\n  \"arenaId\": 1,\n  \"startDate\": \"2025-07-05T10:00:00.000Z\",\n  \"endDate\": \"2025-07-07T18:00:00.000Z\",\n  \"registrationDeadline\": \"2025-06-30T23:59:59.000Z\",\n  \"categoryFilter\": \"PRO\",\n  \"status\": \"SCHEDULED\"\n}"
+      },
+      "url": "{{ base_url }}/api/tournaments",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ jwt_token }}"
+      },
+      "metaSortKey": -10,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_tournaments_get",
+      "_type": "request",
+      "parentId": "grp_tournaments",
+      "name": "Get tournament by ID",
+      "description": "Retorna torneio específico.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/tournaments/1",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -11,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_tournaments_update",
+      "_type": "request",
+      "parentId": "grp_tournaments",
+      "name": "Update tournament",
+      "description": "Atualiza campos opcionais de um torneio existente.",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Copa Beach 2025 - Atualizada\",\n  \"status\": \"ONGOING\"\n}"
+      },
+      "url": "{{ base_url }}/api/tournaments/1",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ jwt_token }}"
+      },
+      "metaSortKey": -12,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_tournaments_delete",
+      "_type": "request",
+      "parentId": "grp_tournaments",
+      "name": "Delete tournament",
+      "description": "Remove o torneio pelo ID (admin ou criador).",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/tournaments/1",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ jwt_token }}"
+      },
+      "metaSortKey": -13,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_matches_list",
+      "_type": "request",
+      "parentId": "grp_matches",
+      "name": "List matches",
+      "description": "Busca todas as partidas.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/matches",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -14,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_matches_by_tournament",
+      "_type": "request",
+      "parentId": "grp_matches",
+      "name": "Matches by tournament",
+      "description": "Filtra partidas por ID do torneio.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/matches/tournament/1",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -15,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_matches_create",
+      "_type": "request",
+      "parentId": "grp_matches",
+      "name": "Create match",
+      "description": "Cria partida (ADMIN) definindo arena, datas e status.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"arenaId\": 2,\n  \"matchDate\": \"2025-07-05T14:00:00.000Z\",\n  \"tournamentId\": 1,\n  \"status\": \"SCHEDULED\",\n  \"scoreResult\": null,\n  \"winnerTeamId\": null\n}"
+      },
+      "url": "{{ base_url }}/api/matches",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ jwt_token }}"
+      },
+      "metaSortKey": -16,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_matches_get",
+      "_type": "request",
+      "parentId": "grp_matches",
+      "name": "Get match by ID",
+      "description": "Busca detalhes de uma partida específica.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/matches/1",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -17,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_matches_update",
+      "_type": "request",
+      "parentId": "grp_matches",
+      "name": "Update match",
+      "description": "Atualiza campos de uma partida (ADMIN).",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"ONGOING\",\n  \"scoreResult\": \"6/3 6/4\",\n  \"winnerTeamId\": 1\n}"
+      },
+      "url": "{{ base_url }}/api/matches/1",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ jwt_token }}"
+      },
+      "metaSortKey": -18,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_matches_delete",
+      "_type": "request",
+      "parentId": "grp_matches",
+      "name": "Delete match",
+      "description": "Remove partida pelo ID (ADMIN).",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/matches/1",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ jwt_token }}"
+      },
+      "metaSortKey": -19,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_registrations_register",
+      "_type": "request",
+      "parentId": "grp_registrations",
+      "name": "Register in tournament",
+      "description": "Inscreve o usuário autenticado em um torneio (opcional partnerId).",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"partnerId\": 2\n}"
+      },
+      "url": "{{ base_url }}/api/registrations/1/register",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ jwt_token }}"
+      },
+      "metaSortKey": -20,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_registrations_list",
+      "_type": "request",
+      "parentId": "grp_registrations",
+      "name": "List registrations",
+      "description": "Lista todos os inscritos de um torneio.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/registrations/1",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -21,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_registrations_unregister",
+      "_type": "request",
+      "parentId": "grp_registrations",
+      "name": "Unregister from tournament",
+      "description": "Remove inscrição do usuário autenticado.",
+      "method": "DELETE",
+      "url": "{{ base_url }}/api/registrations/1/unregister",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ jwt_token }}"
+      },
+      "metaSortKey": -22,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
+    {
+      "_id": "req_health_check",
+      "_type": "request",
+      "parentId": "grp_health",
+      "name": "Health check",
+      "description": "Confirma se a API está disponível.",
+      "method": "GET",
+      "url": "{{ base_url }}/health",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -23,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    }
+  ]
+}

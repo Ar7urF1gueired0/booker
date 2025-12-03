@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { MatchController } from '../controllers/MatchController.ts';
-import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware.ts';
+import { MatchController } from '../controllers/MatchController';
+import { authMiddleware, adminMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
 

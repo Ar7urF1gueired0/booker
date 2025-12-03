@@ -13,6 +13,7 @@ export interface UpdateUserInput {
   fullName?: string;
   role?: Role;
   locationCity?: string | null;
+  photoUrl?: string | null;
 }
 
 export class UserService {
@@ -62,6 +63,14 @@ export class UserService {
     return prisma.user.update({
       where: { id },
       data,
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        photoUrl: true,
+        locationCity: true,
+      },
     });
   }
 

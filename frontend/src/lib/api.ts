@@ -1,6 +1,22 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api';
 
 let authToken: string | null = null;
+
+export type RegisterPayload = {
+  fullName: string;
+  email: string;
+  password: string;
+  gender: 'MALE' | 'FEMALE' | 'OTHER';
+  birthDate: string;
+  locationCity: string;
+};
+
+export type UpdateUserPayload = Partial<{
+  fullName: string;
+  locationCity: string | null;
+  photoUrl: string | null;
+  role: 'ADMIN' | 'USER';
+}>;
 
 export const setApiAuthToken = (token: string | null) => {
   authToken = token;
@@ -41,10 +57,17 @@ export const apiClient = {
     });
   },
 
-  async register(fullName: string, email: string, password: string) {
+  async register(data: RegisterPayload) {
     return this.request('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ fullName, email, password }),
+      body: JSON.stringify(data),
+    });
+  },
+
+  async updateUser(userId: number, data: UpdateUserPayload) {
+    return this.request(`/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
     });
   },
 
@@ -52,8 +75,27 @@ export const apiClient = {
     return this.request('/tournaments');
   },
 
+  async getMyTournaments() {
+    return this.request('/tournaments/my');
+  },
+
   async getTournament(id: number) {
     return this.request(`/tournaments/${id}`);
+  },
+
+  async createTournament(tournamentData: {
+    name: string;
+    arenaId: number;
+    startDate: string;
+    endDate?: string;
+    registrationDeadline?: string;
+    categoryFilter?: string;
+    status?: string;
+  }) {
+    return this.request('/tournaments', {
+      method: 'POST',
+      body: JSON.stringify(tournamentData),
+    });
   },
 
   async registerTournament(tournamentId: number, partnerId?: number) {
@@ -76,5 +118,9 @@ export const apiClient = {
       method: 'POST',
       body: JSON.stringify(postData),
     });
-},
+  },
+
+  async getArenas() {
+    return this.request('/arenas');
+  },
 };

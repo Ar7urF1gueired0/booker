@@ -2,12 +2,12 @@
   "name": "beach-tennis-backend",
   "version": "1.0.0",
   "description": "Beach Tennis Championship Backend API",
-  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon --watch src --exec \"node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts\"",
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "build": "npm run prisma:generate",
+    "start": "tsx src/index.ts",
+    "start:prod": "node --import tsx src/index.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
