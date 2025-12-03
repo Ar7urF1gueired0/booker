@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Image from 'next/image'; 
+import { enqueueSnackbar } from 'notistack';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ export default function Home() {
     try {
       await login(email, password);
     } catch (err) {
-      alert('Erro ao logar');
+      enqueueSnackbar('Usuário e/ou Senha inválidos', { variant: 'error', autoHideDuration: 3000 });
     }
   };
 

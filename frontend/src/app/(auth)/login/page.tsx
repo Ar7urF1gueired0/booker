@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
+import { enqueueSnackbar } from 'notistack';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,7 +20,8 @@ export default function LoginPage() {
     try {
       await login(email, password);
     } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login');
+      console.log(err.message);
+      enqueueSnackbar(err.message, { variant: 'error', autoHideDuration: 3000 });
     } finally {
       setIsLoading(false);
     }
