@@ -177,7 +177,22 @@
       "settingSendCookies": true,
       "settingDisableRenderRequestBody": false
     },
-    
+    {
+      "_id": "req_users_get_by_id",
+      "_type": "request",
+      "parentId": "grp_users",
+      "name": "Get user by ID",
+      "description": "Busca usuário por ID válido.",
+      "method": "GET",
+      "url": "{{ base_url }}/api/users/1",
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false
+    },
     {
       "_id": "req_users_get_by_email",
       "_type": "request",
