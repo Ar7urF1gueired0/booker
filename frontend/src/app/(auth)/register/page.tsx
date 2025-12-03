@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 
 type GenderOption = 'MALE' | 'FEMALE' | 'OTHER';
@@ -73,13 +74,6 @@ export default function RegisterPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl w-full">
         {/* Lado esquerdo - Ilustração */}
         <div className="hidden lg:flex flex-col items-center justify-center">
-          <div className="relative w-full max-w-md">
-            <img
-              src="/public/tenista.png"
-              alt="Beach Tennis Illustration"
-              className="w-full h-auto"
-            />
-          </div>
 
           <h2 className="mt-8 text-2xl font-bold text-gray-800 text-center">🎾 Beach Tennis</h2>
           <p className="mt-2 text-gray-600 text-center">Championship Scheduling System</p>
@@ -87,7 +81,7 @@ export default function RegisterPage() {
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">Já tem uma conta?</p>
             <Link
-              href="/login"
+              href="/"
               className="inline-block px-6 py-2 border-2 border-green-400 text-green-600 rounded-full hover:bg-green-50 transition font-semibold"
             >
               Faça login
