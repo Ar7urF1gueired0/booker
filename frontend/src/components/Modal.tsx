@@ -61,7 +61,7 @@ export function Modal({
   if (!isOpen) return null;
 
   const handleChange = (name: string, value: string) => {
-    setValues((prev) => ({ ...prev, [name]: value }));
+    setValues(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -80,7 +80,7 @@ export function Modal({
           required={field.required}
           placeholder={field.placeholder}
           value={values[field.name] ?? ''}
-          onChange={(e) => handleChange(field.name, e.target.value)}
+          onChange={e => handleChange(field.name, e.target.value)}
           className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-cyan-500 focus:outline-none"
         />
       );
@@ -93,11 +93,11 @@ export function Modal({
           name={field.name}
           required={field.required}
           value={values[field.name] ?? ''}
-          onChange={(e) => handleChange(field.name, e.target.value)}
+          onChange={e => handleChange(field.name, e.target.value)}
           className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-cyan-500 focus:outline-none"
         >
           <option value="">Selecione...</option>
-          {field.options?.map((option) => (
+          {field.options?.map(option => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
@@ -114,66 +114,79 @@ export function Modal({
         required={field.required}
         placeholder={field.placeholder}
         value={values[field.name] ?? ''}
-        onChange={(e) => handleChange(field.name, e.target.value)}
+        onChange={e => handleChange(field.name, e.target.value)}
         className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-cyan-500 focus:outline-none"
       />
     );
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="w-full max-w-xl rounded-2xl bg-white p-6 shadow-2xl">
-        <div className="flex items-start justify-between gap-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-6">
+      <div className="w-full max-w-xl max-h-[90vh] flex flex-col rounded-2xl bg-white shadow-2xl">
+        {/* Header - fixo no topo */}
+        <div className="flex items-start justify-between gap-4 p-4 sm:p-6 pb-0 sm:pb-0 shrink-0">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-            {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
+            <h2 className="text-base sm:text-lg font-bold text-gray-900">{title}</h2>
+            {subtitle && <p className="text-xs sm:text-sm text-gray-500">{subtitle}</p>}
           </div>
           {onClose && (
             <button
               type="button"
               aria-label="Fechar modal"
               onClick={onClose}
-              className="rounded-full p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+              className="rounded-full p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 shrink-0"
             >
               <X size={18} />
             </button>
           )}
         </div>
 
-        {bodyText && <p className="mt-4 text-sm text-gray-700">{bodyText}</p>}
+        {/* Conteúdo com scroll */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 pt-4">
+          {bodyText && <p className="text-sm text-gray-700">{bodyText}</p>}
 
-        {children && <div className="mt-4">{children}</div>}
+          {children && <div className="mt-4">{children}</div>}
 
+          {formSchema && (
+            <form className="space-y-4" onSubmit={handleSubmit} id="modal-form">
+              {formSchema.fields.map(field => (
+                <div key={field.name} className="space-y-1">
+                  <label
+                    htmlFor={field.name}
+                    className="text-xs sm:text-sm font-semibold text-gray-700"
+                  >
+                    {field.label}
+                  </label>
+                  {renderField(field)}
+                  {field.description && (
+                    <p className="text-xs text-gray-500">{field.description}</p>
+                  )}
+                </div>
+              ))}
+            </form>
+          )}
+        </div>
+
+        {/* Footer com botões - fixo no rodapé */}
         {formSchema && (
-          <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
-            {formSchema.fields.map((field) => (
-              <div key={field.name} className="space-y-1">
-                <label htmlFor={field.name} className="text-sm font-semibold text-gray-700">
-                  {field.label}
-                </label>
-                {renderField(field)}
-                {field.description && <p className="text-xs text-gray-500">{field.description}</p>}
-              </div>
-            ))}
-
-            <div className="flex justify-end gap-3 pt-2">
-              {onClose && (
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-                >
-                  Cancelar
-                </button>
-              )}
+          <div className="flex justify-end gap-3 p-4 sm:p-6 pt-4 border-t border-gray-100 shrink-0">
+            {onClose && (
               <button
-                type="submit"
-                className="rounded-full bg-cyan-500 px-5 py-2 text-sm font-bold text-white transition hover:bg-cyan-600"
+                type="button"
+                onClick={onClose}
+                className="rounded-full border border-gray-200 px-4 py-2 text-xs sm:text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
               >
-                {formSchema.submitLabel ?? 'Salvar'}
+                Cancelar
               </button>
-            </div>
-          </form>
+            )}
+            <button
+              type="submit"
+              form="modal-form"
+              className="rounded-full bg-cyan-500 px-5 py-2 text-xs sm:text-sm font-bold text-white transition hover:bg-cyan-600"
+            >
+              {formSchema.submitLabel ?? 'Salvar'}
+            </button>
+          </div>
         )}
       </div>
     </div>
