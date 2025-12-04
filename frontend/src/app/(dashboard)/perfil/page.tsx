@@ -32,12 +32,26 @@ export default function ProfilePage() {
   const [photoPreviewSrc, setPhotoPreviewSrc] = useState('');
   const [photoValidationError, setPhotoValidationError] = useState('');
   const [isSavingPhoto, setIsSavingPhoto] = useState(false);
+  const [isSavingHands, setIsSavingHands] = useState(false);
 
   useEffect(() => {
     if (!isPhotoModalOpen) {
       setPhotoFormValues({ photoUrl: user?.photoUrl ?? '' });
     }
   }, [isPhotoModalOpen, user?.photoUrl]);
+
+  // Handedness state
+  const [forehandSelection, setForehandSelection] = useState<'RIGHT' | 'LEFT' | null>(
+    (user?.forehand as 'RIGHT' | 'LEFT') ?? null
+  );
+  const [backhandSelection, setBackhandSelection] = useState<'ONE_HAND' | 'TWO_HANDS' | null>(
+    (user?.backhand as 'ONE_HAND' | 'TWO_HANDS') ?? null
+  );
+
+  useEffect(() => {
+    setForehandSelection((user?.forehand as 'RIGHT' | 'LEFT') ?? null);
+    setBackhandSelection((user?.backhand as 'ONE_HAND' | 'TWO_HANDS') ?? null);
+  }, [user?.forehand, user?.backhand]);
 
   useEffect(() => {
     if (!isPhotoModalOpen) return;
@@ -153,6 +167,22 @@ export default function ProfilePage() {
       icon: <ShieldCheck size={16} className="text-cyan-500" />,
     },
   ];
+
+  const handleSaveHands = async () => {
+    if (!user) return;
+    setIsSavingHands(true);
+    try {
+      await updateProfile({
+        forehand: forehandSelection ?? undefined,
+        backhand: backhandSelection ?? undefined,
+      });
+      enqueueSnackbar('Preferência de mão salva com sucesso!', { variant: 'success' });
+    } catch (err: any) {
+      enqueueSnackbar(err?.message ?? 'Falha ao salvar preferência', { variant: 'error' });
+    } finally {
+      setIsSavingHands(false);
+    }
+  };
 
   const photoModalSchema = useMemo<ModalFormSchema>(
     () => ({
@@ -288,6 +318,77 @@ export default function ProfilePage() {
               </div>
             ))}
           </dl>
+
+          <div className="mt-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">Preferência de Mão</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-2xl border border-gray-100 bg-gray-50/60 px-4 py-3">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-gray-400">Forehand</dt>
+                <div className="mt-2 flex items-center gap-4">
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="forehand"
+                      value="RIGHT"
+                      checked={forehandSelection === 'RIGHT'}
+                      onChange={() => setForehandSelection('RIGHT')}
+                      className="form-radio"
+                    />
+                    <span className="text-sm">Direito</span>
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="forehand"
+                      value="LEFT"
+                      checked={forehandSelection === 'LEFT'}
+                      onChange={() => setForehandSelection('LEFT')}
+                      className="form-radio"
+                    />
+                    <span className="text-sm">Esquerdo</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-gray-100 bg-gray-50/60 px-4 py-3">
+                <dt className="text-xs font-semibold uppercase tracking-wide text-gray-400">Backhand</dt>
+                <div className="mt-2 flex items-center gap-4">
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="backhand"
+                      value="ONE_HAND"
+                      checked={backhandSelection === 'ONE_HAND'}
+                      onChange={() => setBackhandSelection('ONE_HAND')}
+                      className="form-radio"
+                    />
+                    <span className="text-sm">Uma mão</span>
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="backhand"
+                      value="TWO_HANDS"
+                      checked={backhandSelection === 'TWO_HANDS'}
+                      onChange={() => setBackhandSelection('TWO_HANDS')}
+                      className="form-radio"
+                    />
+                    <span className="text-sm">Duas mãos</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <button
+                onClick={handleSaveHands}
+                disabled={isSavingHands}
+                className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-2 text-white font-semibold hover:bg-cyan-600 disabled:opacity-50"
+              >
+                {isSavingHands ? 'Salvando...' : 'Salvar preferências'}
+              </button>
+            </div>
+          </div>
         </section>
       </div>
 

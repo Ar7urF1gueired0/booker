@@ -16,6 +16,8 @@ export type UpdateUserPayload = Partial<{
   locationCity: string | null;
   photoUrl: string | null;
   role: 'ADMIN' | 'USER';
+  forehand: 'RIGHT' | 'LEFT';
+  backhand: 'ONE_HAND' | 'TWO_HANDS';
 }>;
 
 export const setApiAuthToken = (token: string | null) => {
@@ -111,6 +113,10 @@ export const apiClient = {
 
   async getPosts() {
     return this.request('/posts');
+  },
+
+  async getUserById(id: number) {
+    return this.request(`/users/${id}`);
   },
 
   async createPost(postData: { contentText: string; imageUrl: string }) {

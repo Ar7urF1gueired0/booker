@@ -10,7 +10,68 @@ interface User {
   fullName: string;
   role: string;
   photoUrl?: string;
+  // Optional profile fields (may come from full user fetch)
+  gender?: 'MALE' | 'FEMALE' | 'OTHER' | null;
+  birthDate?: string | null;
+  forehand?: string | null;
+  backhand?: string | null;
+  level?: string | null;
+  locationCity?: string | null;
+  coverUrl?: string | null;
+  // Display-friendly fields added by the client
+  displayGender?: string | null;
+  age?: number | null;
+  displayForehand?: string | null;
+  displayBackhand?: string | null;
 }
+
+// Helper to compute age from birth date
+const computeAge = (birthDate?: string | null): number | null => {
+  if (!birthDate) return null;
+  const bd = new Date(birthDate);
+  if (Number.isNaN(bd.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - bd.getFullYear();
+  const m = today.getMonth() - bd.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < bd.getDate())) {
+    age -= 1;
+  }
+  return age;
+};
+
+// Normalize server user to include display-friendly fields
+const normalizeProfileFields = (u: any): User => {
+  if (!u) return u;
+
+  const genderMap: Record<string, string> = {
+    MALE: 'Masculino',
+    FEMALE: 'Feminino',
+    OTHER: 'Outro',
+  };
+
+  const forehandMap: Record<string, string> = {
+    RIGHT: 'Direito',
+    LEFT: 'Esquerdo',
+  };
+
+  const backhandMap: Record<string, string> = {
+    ONE_HAND: 'Uma mão',
+    TWO_HANDS: 'Duas mãos',
+  };
+
+  const displayGender = u.gender ? genderMap[u.gender] ?? String(u.gender) : null;
+  const age = computeAge(u.birthDate ?? u.birthDate?.toString?.());
+  const displayForehand = u.forehand ? forehandMap[u.forehand] ?? String(u.forehand) : null;
+  const displayBackhand = u.backhand ? backhandMap[u.backhand] ?? String(u.backhand) : null;
+
+  return {
+    ...u,
+    displayGender,
+    age,
+    displayForehand,
+    displayBackhand,
+  } as User;
+};
 
 interface AuthSession {
   token: string;
@@ -81,12 +142,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const storedSession = readStoredSession();
     if (storedSession) {
       setToken(storedSession.token);
-      setUser(storedSession.user);
       setApiAuthToken(storedSession.token);
+
+      // Try to fetch the full user profile to enrich stored session
+      (async () => {
+        try {
+          const resp = await apiClient.getUserById(storedSession.user.id);
+          const fullUser = resp?.data ?? resp ?? storedSession.user;
+          const normalized = normalizeProfileFields(fullUser);
+          setUser(normalized);
+          // Persist normalized user as well
+          persistSession({ token: storedSession.token, user: normalized });
+        } catch (err) {
+          // fallback to stored user if fetch fails
+          setUser(storedSession.user);
+        } finally {
+          setIsLoading(false);
+        }
+      })();
     } else {
       setApiAuthToken(null);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
   const applySession = useCallback((session: AuthSession | null) => {
@@ -98,10 +175,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    // Normalize profile fields for display (age, labels)
+    const normalizedUser = normalizeProfileFields(session.user as any);
+
     setToken(session.token);
-    setUser(session.user);
+    setUser(normalizedUser);
     setApiAuthToken(session.token);
-    persistSession(session);
+    persistSession({ token: session.token, user: normalizedUser });
   }, []);
 
   const login = useCallback(
@@ -109,7 +189,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(true);
       try {
         const result = (await apiClient.login(email, password)) as AuthSession;
-        applySession(result);
+
+        // Try to fetch full user profile (includes gender, forehand, backhand, etc.)
+        let fullUser = result.user;
+        try {
+          const resp = await apiClient.getUserById(result.user.id);
+          fullUser = resp?.data ?? resp;
+        } catch (err) {
+          console.warn('Failed to fetch full user profile after login', err);
+        }
+
+        applySession({ token: result.token, user: fullUser });
         router.push('/dashboard');
         return result;
       } catch (error) {
@@ -126,7 +216,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(true);
       try {
         const result = (await apiClient.register(data)) as AuthSession;
-        applySession(result);
+
+        // Fetch the full user profile after registration (server may return minimal user)
+        let fullUser = result.user;
+        try {
+          const resp = await apiClient.getUserById(result.user.id);
+          fullUser = resp?.data ?? resp;
+        } catch (err) {
+          console.warn('Failed to fetch full user profile after register', err);
+        }
+
+        applySession({ token: result.token, user: fullUser });
         router.push('/dashboard');
         return result;
       } catch (error) {

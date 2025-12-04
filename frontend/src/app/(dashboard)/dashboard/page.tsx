@@ -46,6 +46,10 @@ export default function DashboardPage() {
       createdAt: string;
       contentText: string;
       imageUrl: string;
+      gender: string;
+      age: string;
+      forehand: string;
+      backhand: string;
     }>
   >([]);
   const [postFormValues, setPostFormValues] = React.useState<{
@@ -321,16 +325,16 @@ export default function DashboardPage() {
               </h4>
               <div className="grid grid-cols-2 gap-y-2 text-sm">
                 <span className="text-gray-500">Gênero</span>
-                <span className="text-gray-800 font-medium text-right">Feminino</span>
+                <span className="text-gray-800 font-medium text-right">{user?.displayGender ?? user?.gender}</span>
 
                 <span className="text-gray-500">Idade</span>
-                <span className="text-gray-800 font-medium text-right">30 anos</span>
+                <span className="text-gray-800 font-medium text-right">{user?.age ?? ''}</span>
 
                 <span className="text-gray-500">Forehand</span>
-                <span className="text-gray-800 font-medium text-right">Direita</span>
+                <span className="text-gray-800 font-medium text-right">{user?.displayForehand ?? user?.forehand}</span>
 
                 <span className="text-gray-500">Backhand</span>
-                <span className="text-gray-800 font-medium text-right">Uma mão</span>
+                <span className="text-gray-800 font-medium text-right">{user?.displayBackhand ?? user?.backhand}</span>
               </div>
             </div>
           </div>
@@ -339,7 +343,7 @@ export default function DashboardPage() {
         {/* 2. Widget de Calendário (Mini) */}
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="font-bold text-gray-700 text-sm">Jogos Setembro 2025</h3>
+            <h3 className="font-bold text-gray-700 text-sm">Jogos Dezembro 2025</h3>
             <div className="flex gap-1">
               <ChevronLeft size={16} className="text-gray-400 cursor-pointer" />
               <ChevronRight size={16} className="text-gray-400 cursor-pointer" />
