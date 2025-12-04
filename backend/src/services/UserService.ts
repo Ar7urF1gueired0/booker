@@ -1,4 +1,4 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Role, HandType, BackhandType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -14,6 +14,8 @@ export interface UpdateUserInput {
   role?: Role;
   locationCity?: string | null;
   photoUrl?: string | null;
+  forehand?: HandType;
+  backhand?: BackhandType;
 }
 
 export class UserService {
@@ -63,6 +65,7 @@ export class UserService {
     return prisma.user.update({
       where: { id },
       data,
+      // return relevant profile fields so frontend can update session
       select: {
         id: true,
         email: true,
@@ -70,6 +73,12 @@ export class UserService {
         role: true,
         photoUrl: true,
         locationCity: true,
+        gender: true,
+        birthDate: true,
+        forehand: true,
+        backhand: true,
+        level: true,
+        coverUrl: true,
       },
     });
   }

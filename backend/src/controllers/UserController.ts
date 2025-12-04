@@ -1,7 +1,7 @@
 // @ts-nocheck
 import type { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { Role } from '@prisma/client';
+import { Role, HandType, BackhandType } from '@prisma/client';
 import { UserService } from '../services/UserService';
 
 export class UserController {
@@ -106,6 +106,18 @@ export class UserController {
           return res.status(400).json({ error: 'Invalid role' });
         }
         updateData.role = req.body.role as Role;
+      }
+      if (req.body.forehand !== undefined) {
+        if (!Object.values(HandType).includes(req.body.forehand as HandType)) {
+          return res.status(400).json({ error: 'Invalid forehand' });
+        }
+        updateData.forehand = req.body.forehand as HandType;
+      }
+      if (req.body.backhand !== undefined) {
+        if (!Object.values(BackhandType).includes(req.body.backhand as BackhandType)) {
+          return res.status(400).json({ error: 'Invalid backhand' });
+        }
+        updateData.backhand = req.body.backhand as BackhandType;
       }
 
       const user = await UserService.updateUser(parsedId, updateData);
