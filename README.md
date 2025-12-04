@@ -103,12 +103,6 @@ O **Booker** é um sistema SaaS (Software as a Service) que resolve os principai
 - Publicação de posts (texto + imagem)
 - Visualização de feed com todos os posts
 
-### 🎖️ **Sistema de Conquistas**
-- Modelo de achievements predefinidos
-- Associação automática de conquistas a usuários
-- Histórico de quando cada conquista foi obtida
-- Visualização no perfil
-
 ---
 
 ## 🛠️ Tecnologias
