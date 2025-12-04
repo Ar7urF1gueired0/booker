@@ -34,8 +34,6 @@ O **Booker** é um sistema SaaS (Software as a Service) que resolve os principai
 | **Gestão de Participantes** | Cadastro completo com dados técnicos (nível, tipo de mão, backhand) |
 | **Organização de Torneios** | Criação, gerenciamento de datas, filtro por nível e categoria |
 | **Agendamento Automático** | Interface intuitiva para agendar partidas em arenas específicas |
-| **Duplas** | Suporte para registro como jogador individual ou em dupla |
-| **Rastreamento** | Histórico completo de partidas, placar e status |
 | **Feed Social** | Comunidade integrada para compartilhar momentos |
 | **Controle de Acesso** | Sistema de roles (USER/ADMIN) com autenticação JWT segura |
 
@@ -70,12 +68,8 @@ O **Booker** é um sistema SaaS (Software as a Service) que resolve os principai
   - Filtro por categoria/nível
   - Arena associada
   - Status: OPEN, ONGOING, FINISHED, CANCELED, SCHEDULED
-- **Listar torneios** com busca e filtros
-- **Registrar em torneios**:
-  - Como jogador individual
-  - Como dupla (com seleção de parceiro)
-  - Ver lista de participantes
-  - Cancelar inscrição
+- **Listar torneios**
+- **Registrar em torneios**
 
 ### 📅 **Agendamento de Partidas**
 - Visualização de agenda completa
@@ -107,9 +101,7 @@ O **Booker** é um sistema SaaS (Software as a Service) que resolve os principai
 
 ### 📱 **Feed Social**
 - Publicação de posts (texto + imagem)
-- Compartilhamento de momentos
 - Visualização de feed com todos os posts
-- Exclusão de posts pessoais
 
 ### 🎖️ **Sistema de Conquistas**
 - Modelo de achievements predefinidos
@@ -127,10 +119,8 @@ O **Booker** é um sistema SaaS (Software as a Service) que resolve os principai
 | **Next.js 14** | Framework React moderno com SSR/SSG, otimização automática |
 | **TypeScript** | Tipagem estática para segurança em desenvolvimento |
 | **Tailwind CSS** | Estilização utility-first responsiva |
-| **Material UI (MUI)** | Componentes de UI prontos para produção |
 | **React Context API** | Gerenciamento de estado (autenticação) |
 | **Vitest + jsdom** | Testes unitários rápidos com suporte a DOM |
-| **Notistack** | Sistema de notificações (toast messages) |
 | **Next.js App Router** | Roteamento moderno com suporte a layouts aninhados |
 
 ### **Backend** (Express + TypeScript)
@@ -149,18 +139,16 @@ O **Booker** é um sistema SaaS (Software as a Service) que resolve os principai
 ### **DevOps & Infraestrutura**
 | Tecnologia | Propósito |
 |-----------|----------|
-| **Docker** | Containerização da aplicação |
-| **Docker Compose** | Orquestração de containers (app + banco) |
-| **PostgreSQL (Docker)** | Banco de dados em container |
+| **PostgreSQL (Trailway)** | Banco de dados |
 | **npm/Node.js** | Gerenciamento de dependências e runtime |
+| **Vercel/Render** | Deploy do frontend e backend respectivamente|
 
 ---
 
 ## 📋 Pré-requisitos
 
 - **Node.js** v18+ ([Download](https://nodejs.org/))
-- **npm** ou **yarn**
-- **Docker** e **Docker Compose** ([Download](https://www.docker.com/))
+- **npm**
 - **Git** ([Download](https://git-scm.com/))
 
 ## 🚀 Instalação Rápida
@@ -173,9 +161,6 @@ node --version
 # npm
 npm --version
 
-# Docker & Docker Compose
-docker --version
-docker-compose --version
 ```
 
 ### Passo 1: Clonar o Repositório
@@ -202,7 +187,7 @@ POSTGRES_PORT=5440
 DATABASE_URL="postgresql://booker:booker@localhost:5440/booker?schema=public"
 
 # ===== AUTHENTICATION =====
-JWT_SECRET=seu_jwt_secret_super_secreto_aqui
+JWT_SECRET=secret
 ```
 
 **Arquivo `frontend/.env.local`:**
@@ -465,20 +450,16 @@ Backend API
 - ✅ Editar dados pessoais
 - ✅ Foto de perfil e capa
 - ✅ Informações técnicas (mão, tipo de backhand, nível)
-- ✅ Histórico de conquistas
 
 ### Gerenciamento de Torneios
 - ✅ Criar torneios (admin)
 - ✅ Listar torneios disponíveis
-- ✅ Registrar em torneios (individual ou dupla)
-- ✅ Ver participantes
-- ✅ Filtrar por nível e categoria
+- ✅ Registrar em torneios
 
 ### Agendamento de Partidas
 - ✅ Agendar partidas
 - ✅ Ver agenda de partidas
 - ✅ Atualizar status (agendada, em andamento, finalizada)
-- ✅ Registrar placar
 
 ### Gerenciamento de Arenas
 - ✅ Cadastro de arenas
@@ -553,7 +534,7 @@ DELETE /api/posts/:id         - Deletar post
 **User** - Usuários cadastrados
 - Dados pessoais (nome, email, data nascimento)
 - Dados técnicos (tipo de mão, backhand, nível)
-- Relacionamentos com torneios, partidas e conquistas
+- Relacionamentos com torneios, partidas
 
 **Tournament** - Campeonatos
 - Informações gerais (nome, datas, status)
@@ -563,7 +544,6 @@ DELETE /api/posts/:id         - Deletar post
 
 **TournamentRegistration** - Inscrições em torneios
 - Vincula usuário a torneio
-- Suporte para parceiro (dupla)
 - Data de inscrição
 
 **Match** - Partidas
@@ -579,8 +559,6 @@ DELETE /api/posts/:id         - Deletar post
 - Texto e/ou imagem
 - Vinculado ao usuário
 
-**Achievement** - Conquistas
-- Associação de usuários com conquistas
 
 ### Enums Disponíveis
 
